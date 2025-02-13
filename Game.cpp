@@ -22,6 +22,7 @@ void Game::setBoard(Board b) {
     board = b;
 }
 
+// Check for mill at given position in given board
 bool Game::closeMill(short int i, const Board& b){
     // Tests position for a mill after tile has been placed
     // Pull value at i
@@ -208,3 +209,4 @@ bool Game::closeMill(short int i, const Board& b){
             return false;
     }
 }
+
