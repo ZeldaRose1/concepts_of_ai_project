@@ -1,3 +1,11 @@
+# Zelda added files
+.vscode/*
+.vscode
+
+# Compiled files
+test
+
+
 # Prerequisites
 *.d
 
