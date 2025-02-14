@@ -211,6 +211,27 @@ bool Game::closeMill(short int i, Board& b){
 }
 
 
-// void Game::generateRemove(const Board& b, vector<Board>& l) {
-//     // 
-// }
+void Game::generateRemove(Board& b, vector<Board>& l) {
+    // Generate a list of all possible black removals and insert into list l
+    for (int i = 0; i < 23; i++) {
+        if (b[i] == -1) {
+            if (!closeMill(i, b)) {
+                Board b2(b);
+                b2.updateBoard(i, 0);
+                l.push_back(b2);
+            }
+        }
+    }
+    // If we have any values in the list, we are done.
+    if (l.size() > 0)
+        return;
+    
+    // If we cannot remove an unprotected piece, we remove a piece with a mil.
+    for (int i = 0; i < 23; i++) {
+        if (b[i] == -1) {
+            Board b2(b);
+            b2.updateBoard(i, 0);
+            l.push_back(b2);
+        }
+    }
+}

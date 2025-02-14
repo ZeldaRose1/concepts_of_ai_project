@@ -72,7 +72,7 @@ void Board::updateBoard(short int i, short int val) {
 
 
 // Read index operator
-short int Board::operator[](const unsigned short int i){
+short int Board::operator[](int i){
     // Checks both white and black before returning state
     // Validate index
     if (i < 0 || i >= 23)

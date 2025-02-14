@@ -509,6 +509,62 @@ bool testNeighbors() {
 }
 
 
+bool testGenerateRemove() {
+    /* Validates behavior of GenerateRemove function. */
+    // Declare Variables
+    Game g;
+    Board b1;
+    vector<Board> l;
+
+    // Setup three black pieces on the board
+    b1.black = pow(2, 22) + pow(2, 20) + pow(2, 2) + pow(2, 0);
+    g.generateRemove(b1, l);
+
+    // Assert blocks
+    try {
+        /* Check behavior with no mills (case 1) */
+        // Should have four solutions.
+        assert(l.size() == 4);
+        assert(l[0].black == pow(2, 22) + pow(2, 20) + pow(2, 2));
+        assert(l[1].black == pow(2, 22) + pow(2, 20) + pow(2, 0));
+        assert(l[2].black == pow(2, 22) + pow(2, 2) + pow(2, 0));
+        assert(l[3].black == pow(2, 20) + pow(2, 2) + pow(2, 0));
+
+        /* Validate behavior when a mill exists (mixed case 2) */
+        l.clear();
+        // Form mill across row 6
+        b1.black += pow(2, 21);
+        g.generateRemove(b1, l);
+
+        // Start asserts for mixed case
+        assert(l.size() == 2);
+        assert(l[0].black == pow(2, 22) + pow(2, 21) + pow(2, 20) + pow(2, 2));
+        assert(l[1].black == pow(2, 22) + pow(2, 21) + pow(2, 20) + pow(2, 0));
+
+        /* Validate behavior when only mill exists (case 3) */
+        l.clear();
+        // Form mill across row 0
+        b1.black += pow(2, 1);
+        g.generateRemove(b1, l);
+
+        // Start asserts for mixed case
+        assert(l.size() == 6);
+        assert(l[0].black == pow(2, 22) + pow(2, 21) + pow(2, 20) + pow(2, 2) + pow(2, 1));
+        assert(l[1].black == pow(2, 22) + pow(2, 21) + pow(2, 20) + pow(2, 2) + pow(2, 0));
+        assert(l[2].black == pow(2, 22) + pow(2, 21) + pow(2, 20) + pow(2, 1) + pow(2, 0));
+        assert(l[3].black == pow(2, 22) + pow(2, 21) + pow(2, 2) + pow(2, 1) + pow(2, 0));
+        assert(l[4].black == pow(2, 22) + pow(2, 20) + pow(2, 2) + pow(2, 1) + pow(2, 0));
+        assert(l[5].black == pow(2, 21) + pow(2, 20) + pow(2, 2) + pow(2, 1) + pow(2, 0));
+
+    } catch (const exception e){
+        cout << "Exception raised in testGenerateRemove:\t" << e.what() << endl;
+        return false;
+    }
+
+    return true;
+}
+
+
 int main() {
     // Initialize boolean for tracking test failures
     bool all_pass = true;
@@ -539,6 +595,11 @@ int main() {
     if (!testNeighbors()) {
         all_pass = false;
         cout << "testNeighbors failed" << endl;
+    }
+
+    if (!testGenerateRemove()) {
+        all_pass = false;
+        cout << "testGenerateRemove failed" << endl;
     }
 
     if (all_pass)

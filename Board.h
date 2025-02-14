@@ -48,7 +48,7 @@ class Board {
     
         // Class operators
         // Read index operator
-        short int operator[](const unsigned short int); // Overload [] operator to read value
+        short int operator[](int); // Overload [] operator to read value
         void updateBoard(short int, short int); // index, (+1, 0, or -1) for val
 
 

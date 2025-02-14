@@ -21,7 +21,7 @@ class Game {
         // Setters and Getters for convenience
         void setBoard(Board);
         Board& getBoard();
-        // void generateRemove(const Board&, vector<Board>&);
+        void generateRemove(Board&, vector<Board>&);
 
         // vector<short int> generateAdd();
         // vector<short int> generateMove();
