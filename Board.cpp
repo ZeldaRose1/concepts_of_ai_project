@@ -1,25 +1,103 @@
 #include "Board.h"
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
 Board::Board(){
     // Initialize the board's state
-    for (short int i = 0; i < 23; i++){
-        state[i] = 0;
-    }
+    white = 0;
+    black = 0;
 }
 
 Board::Board(const Board& b) {
     // Copy constructor
-    for (short int i = 0; i < 23; i++){
-        state[i] = b.state[i];
+    white = b.white;
+    black = b.black;
+}
+
+// Write index operator
+void Board::updateBoard(short int i, short int val) {
+    // This function assumes white is changing the value
+    // Check preconditions
+    
+    // Declare variables
+    unsigned long int w;
+    unsigned long int b;
+
+    // Validate val
+    if (val != 1 && val != -1 && val != 0)
+        throw std::invalid_argument("Board can only hold 1, 0, or -1");
+    // Validate index
+    if (i < 0 || i >= 23)
+        throw std::invalid_argument("Index must be between 0 and 22");
+    
+    // Save value of position i into two variables
+    if (i == 0) {
+        w = white % 2;
+        b = black % 2;
+    } else {
+        w = (white / static_cast<unsigned long int>(pow(2, i))) % 2;
+        b = (black / static_cast<unsigned long int>(pow(2, i))) % 2;
     }
+
+    // Check for consistency
+    if (w == 1 && b == 1)
+        throw std::domain_error("White and black occupy same space.");
+    else if (val == 1) { // Set space to white
+        if (b == 1)
+            black -= static_cast<unsigned long int>(pow(2, i));
+        if (w == 1)
+            return; // Value already matches
+        else{
+            white += static_cast<unsigned long int>(pow(2, i));
+        }
+
+    } else if (val == -1) { // Set space to black
+        if (w == 1)
+            white -= static_cast<unsigned long int>(pow(2, i));
+        if (b == 1)
+            return; // Value already matches
+        else
+            black += static_cast<unsigned long int>(pow(2, i)); // Update black
+
+    } else if (val == 0) { // Set space to empty   
+        if (w == 1)
+            white -= static_cast<unsigned long int>(pow(2, i));
+        if (b == 1)
+            black -= static_cast<unsigned long int>(pow(2, i));
+    }
+    return;
 }
 
 
-short int& Board::operator[](const unsigned short int i) {
-    return state[i];
+// Read index operator
+short int Board::operator[](const unsigned short int i){
+    // Checks both white and black before returning state
+    // Validate index
+    if (i < 0 || i >= 23)
+        throw std::invalid_argument("Index must be between 0 and 22");
+
+    unsigned long int w;
+    unsigned long int b;
+
+    // Check value at position i for white and black
+    if (i == 0) {
+        w = white % 2;
+        b = black % 2;
+    } else {
+        w = (white / static_cast<unsigned long int>(pow(2, i))) % 2;
+        b = (black / static_cast<unsigned long int>(pow(2, i))) % 2;
+    }
+
+    if (w == 1 && b == 1)
+        throw std::domain_error("Same position assigned to white and black");
+    else if (w == 1 && b == 0)
+        return 1;
+    else if (w == 0 && b == 1)
+        return -1;
+    else
+        return 0;
 }
 
 

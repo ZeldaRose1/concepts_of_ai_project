@@ -15,12 +15,13 @@ class Game {
         Game(Board);
         
         // Necessary functions
-        bool closeMill(short int, const Board& b); // Input board location; returns T/F if move completes a mill
+        bool closeMill(short int, Board& b); // Input board location; returns T/F if move completes a mill
         
         
         // Setters and Getters for convenience
         void setBoard(Board);
         Board& getBoard();
+        // void generateRemove(const Board&, vector<Board>&);
 
         // vector<short int> generateAdd();
         // vector<short int> generateMove();

@@ -6,7 +6,9 @@ using namespace std;
 class Board {
     public: // This is such a small class, probably don't need private
         // class variables
-        short int state[23]; // Array of short ints, 1 = white -1 = black 0 = blank
+        unsigned long int white;
+        unsigned long int black;
+        // short int state[23]; // Array of short ints, 1 = white -1 = black 0 = blank
 
         // Index values for readability
         const static unsigned short int a0 = 0;
@@ -45,7 +47,10 @@ class Board {
         Board(const Board&);
     
         // Class operators
-        short int& operator[](const unsigned short int); // Overload [] operator to access state directly
+        // Read index operator
+        short int operator[](const unsigned short int); // Overload [] operator to read value
+        void updateBoard(short int, short int); // index, (+1, 0, or -1) for val
+
 
         // Helper functions
         vector<unsigned short int> neighbors(unsigned short int); // Returns vector of neighbors
