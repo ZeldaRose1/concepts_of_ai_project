@@ -269,3 +269,72 @@ vector<Board> Game::generateHopping(Board& b) {
     }
     return l;
 }
+
+
+vector<Board> Game::generateAdd(Board& b) {
+    /*
+        This function will add a tile to the board.
+        White is assumed to be the player in this case.
+    */
+
+    // Initializations
+    vector<Board> l;
+
+    // Loop over each position on the board
+    for (int i = 0; i < 23; i++) {
+        // Check if the position is empty
+        if (b[i] == 0) {
+            // Copy board to a new variable
+            Board b_copy(b);
+            // Set the empty location to white
+            b_copy.updateBoard(i, 1);
+            // Check for a mill
+            if (closeMill(i, b_copy))
+                // Add all possible removals to the list
+                generateRemove(b_copy, l);
+            else
+                // Save board to the list
+                l.push_back(b_copy);
+        }
+    }
+
+    return l;
+}
+
+vector<Board> Game::generateMove(Board& b) {
+    /*
+        Midgame function. Moves pieces around the board when there
+        are more than three white pieces on the board.
+        Assumes white is moving
+    */
+    // Initialize variables
+    vector<Board> l;
+    vector<unsigned short int> n;
+
+    // Loop over all moves on the board
+    for(int i = 0; i < 23; i++) {
+        // Check if tile is placed at location i
+        if (b[i] == 1) {
+            // Assign list of neighbors for position i
+            n = b.neighbors(i);
+            // Loop over list of neighbors
+            for (int j = 0; j < n.size(); j++) {
+                // Check value of Board at every neighboring position
+                if (b[ n[j] ] == 0) {
+                    // Copy board to temporary variable
+                    Board b_copy(b);
+                    // Move piece
+                    b_copy.updateBoard(i, 0);
+                    b_copy.updateBoard(n[j], 1);
+                    // Check for mills
+                    if (closeMill(n[j], b_copy))
+                        generateRemove(b_copy, l);
+                    else // If there are no pieces to remove push the board as is
+                        l.push_back(b_copy);
+                }
+            }
+        }
+    }
+
+    return l;
+}

@@ -614,13 +614,13 @@ bool testGenerateHopping() {
         // Check the second move. No black pieces removed
         assert(l[1].white == pow(2, b.a6) + pow(2, b.a0) + pow(2, b.g0));
         assert(l[1].black == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
-        pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
-        pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0));
+            pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
+            pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0));
         // Check the third move. No black pieces removed
         assert(l[2].white == pow(2, b.a0) + pow(2, b.a3) + pow(2, b.g0));
         assert(l[2].black == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
-        pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
-        pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0));
+            pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
+            pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0));
     } catch (const exception e) {
         cout << "Exception raised in testGenerateHopping:\t" << e.what() << endl;
         return false;
@@ -628,6 +628,92 @@ bool testGenerateHopping() {
 
     return true;
 }
+
+bool testGenerateAdd() {
+    /* Validate performance of generate add */
+    // Initialize variables
+    Game g;
+    Board b;
+    vector<Board> l;
+
+    // Start tests
+    try {
+        /*
+            Test setup has two white pieces in row 0 and one black piece.
+            The first move generated will run the generateRemove function
+            The rest will be simple adds. This should cover all branches
+            of the generateAdd() function.
+
+            generateRemove() will only add one element to the list so we
+            The rest of the code will generate moves for the other 20
+            open spaces for a total of 21 boards in the list.
+        */
+        l.clear();
+        b.white = pow(2, b.a0) + pow(2, b.d0);
+        b.black = pow(2, b.a3);
+        l = g.generateAdd(b);
+        assert(l.size() == 20);
+    } catch (const exception e) {
+        cout << "Exception raised in testGenerateAdd:\t" << e.what() << endl;
+        return false;
+    }
+    
+    return true;
+}
+
+bool testGenerateMove() {
+    /* Validates performance of midgame Game::generateMove() function */
+    // Initialize variables
+    Game g;
+    Board b;
+    vector<Board> l;
+    
+    // Start testing
+    try{
+        /*
+            Setting up a board to test for all posibilities of the code
+            White has a0, d0, and g3 while black has a3.
+            
+            This means that a0 will have one move,
+            d0 will have two moves,
+            and g3 will have 3 moves, one of which will be a mill
+            and remove black's a3 tile.
+
+            In total we can expect 6 outcomes from this test.
+        */
+        b.white = pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3);
+        b.black = pow(2, b.a3);
+        l = g.generateMove(b);
+        // Begin checks
+        assert(l.size() == 6);
+        
+        // Check first entry
+        assert(l[0].white == pow(2, b.b1) + pow(2, b.d0) + pow(2, b.g3));
+        assert(l[0].black == pow(2, b.a3));
+        // Check second entry
+        assert(l[1].white == pow(2, b.a0) + pow(2, b.g0) + pow(2, b.g3));
+        assert(l[1].black == pow(2, b.a3));
+        // Check third entry
+        assert(l[2].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g3));
+        assert(l[2].black == pow(2, b.a3));
+        // Check fourth entry
+        assert(l[3].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g0));
+        assert(l[3].black == 0);
+        // Check fifth entry
+        assert(l[4].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.f3));
+        assert(l[4].black == pow(2, b.a3));
+        // Check sixth and final entry
+        assert(l[5].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g6));
+        assert(l[5].black == pow(2, b.a3));
+
+    } catch (const exception e) {
+        cout << "Exception raised in testGenerateMove:\t" << e.what() << endl;
+        return false;
+    }
+    
+    return true;
+}
+
 
 int main() {
     // Initialize boolean for tracking test failures
@@ -669,6 +755,16 @@ int main() {
     if (!testGenerateHopping()) {
         all_pass = false;
         cout << "testGenerateHopping failed" << endl;
+    }
+    
+    if (!testGenerateAdd()) {
+        all_pass = false;
+        cout << "testGenerateAdd failed" << endl;
+    }
+
+    if (!testGenerateMove()) {
+        all_pass = false;
+        cout << "testGenerateMove failed" << endl;
     }
 
     if (all_pass)

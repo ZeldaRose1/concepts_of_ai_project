@@ -25,7 +25,6 @@ class Game {
         // Major functions
         void generateRemove(Board&, vector<Board>&);
         vector<Board> generateHopping(Board&);
-
-        // vector<short int> generateAdd();
-        // vector<short int> generateMove();
+        vector<Board> generateAdd(Board&);
+        vector<Board> generateMove(Board&);
 };
