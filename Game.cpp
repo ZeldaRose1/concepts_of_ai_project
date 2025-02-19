@@ -235,3 +235,37 @@ void Game::generateRemove(Board& b, vector<Board>& l) {
         }
     }
 }
+
+
+vector<Board> Game::generateHopping(Board& b) {
+    /* Generates a list of Board positions during the endgame */
+    // Initialize variables
+    vector<Board> l;
+
+    // Start outer loop
+    for (int i = 0; i < 23; i++) { // Loop checks all owned pieces
+        // Skip unowned tiles
+        if (b[i] == 1) {
+            for (int j = 0; j < 23; j++) { // Check all pieces that aren't the current tile
+                // Check for empty spaces
+                if (b[j] == 0) {
+                    // Make copy of the board to be pushed to the list
+                    Board b2(b);
+                    
+                    // Update the board with the new move
+                    b2.updateBoard(i, 0);
+                    b2.updateBoard(j, 1);
+                    
+                    // If we can create a mill
+                    if (closeMill(j, b2))
+                        // Add all possible removals to list
+                        generateRemove(b2, l);
+                    else
+                        // Otherwise, just push back the current board
+                        l.push_back(b2);
+                }
+            }
+        }
+    }
+    return l;
+}

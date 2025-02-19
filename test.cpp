@@ -565,6 +565,70 @@ bool testGenerateRemove() {
 }
 
 
+bool testGenerateHopping() {
+    /* Validates behavior of Game::generateHopping */
+    Game g;
+    Board b;
+    b.white = 1; // Single tile on a0
+
+    // Start testing block
+    try {
+        /* Tests all branches of code except for the generateRemove() call */
+        // Run code; should have 22 different options in the list
+        vector<Board> l = g.generateHopping(b);
+        assert(l.size() == 22);
+
+        // Check that the tiles hop in the order we expected
+        for (int i = 0; i < 22; i++) {
+            assert(l[i][i + 1] == 1);
+        }
+
+        /* Test for generateRemove() functionality */
+        l.clear();
+        // Set board to have only three pieces for white outside of a mill
+        b.white = pow(2, b.a6) + pow(2, b.a3) + pow(2, b.g0);
+        // Set board to be have one empty space, and the rest be black
+        b.black = pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
+            pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
+            pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0);
+        // Note the empty space is a0
+        l = g.generateHopping(b);
+        /*
+            Generate Hopping should start by moving g0 to a0 and then remove each black piece
+            that is not part of a mill. Since we cannot remove a piece if there are non-milled
+            pieces, this will reduce the number of entries in the list.
+
+            d0 is the only black piece that isn't in a mill. So we only append one option to the
+            list for the first tile
+
+            The other two options will only move white's a3 and a6 to a0 and leave black alone.
+            We can test these simple cases directly
+        */
+        // Verify correct number of moves
+        assert(l.size() == 3);
+        // Check the first moves output where we remove a piece from black.
+        assert(l[0].white == pow(2, b.a6) + pow(2, b.a3) + pow(2, b.a0));
+        assert(l[0].black == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
+            pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
+            pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1));
+        // Check the second move. No black pieces removed
+        assert(l[1].white == pow(2, b.a6) + pow(2, b.a0) + pow(2, b.g0));
+        assert(l[1].black == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
+        pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
+        pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0));
+        // Check the third move. No black pieces removed
+        assert(l[2].white == pow(2, b.a0) + pow(2, b.a3) + pow(2, b.g0));
+        assert(l[2].black == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
+        pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
+        pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0));
+    } catch (const exception e) {
+        cout << "Exception raised in testGenerateHopping:\t" << e.what() << endl;
+        return false;
+    }
+
+    return true;
+}
+
 int main() {
     // Initialize boolean for tracking test failures
     bool all_pass = true;
@@ -600,6 +664,11 @@ int main() {
     if (!testGenerateRemove()) {
         all_pass = false;
         cout << "testGenerateRemove failed" << endl;
+    }
+
+    if (!testGenerateHopping()) {
+        all_pass = false;
+        cout << "testGenerateHopping failed" << endl;
     }
 
     if (all_pass)

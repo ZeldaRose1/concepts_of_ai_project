@@ -14,16 +14,18 @@ class Game {
         Game();
         Game(Board);
         
-        // Necessary functions
+        // Helper functions
         bool closeMill(short int, Board& b); // Input board location; returns T/F if move completes a mill
         
         
         // Setters and Getters for convenience
         void setBoard(Board);
         Board& getBoard();
+        
+        // Major functions
         void generateRemove(Board&, vector<Board>&);
+        vector<Board> generateHopping(Board&);
 
         // vector<short int> generateAdd();
         // vector<short int> generateMove();
-        // vector<short int> generateHopping();
 };
