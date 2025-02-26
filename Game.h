@@ -27,4 +27,6 @@ class Game {
         vector<Board> generateHopping(Board&);
         vector<Board> generateAdd(Board&);
         vector<Board> generateMove(Board&);
+
+        // vector<Board> GenerateMovesOpening(Board&);
 };
