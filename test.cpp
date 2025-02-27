@@ -714,6 +714,27 @@ bool testGenerateMove() {
     return true;
 }
 
+bool testSwapColors() {
+    /* Validate behavior of Board::swapColors() */
+    // Setup initial board
+    Board b;
+    b.white = pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3) + pow(2, b.b5);
+    b.black = pow(2, b.a3) + pow(2, b.c2) + pow(2, b.e4) + pow(2, b.f5);
+
+    try {
+        // Swap colors
+        b.swapColors();
+        // Validate appropriate swap
+        assert(b.black == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3) + pow(2, b.b5));
+        assert(b.white == pow(2, b.a3) + pow(2, b.c2) + pow(2, b.e4) + pow(2, b.f5));
+    } catch (const exception e) {
+        cout << "Exception raised in testSwapColors:\t" << e.what() << endl;
+        return false;
+    }
+    return true;
+}
+
+
 
 int main() {
     // Initialize boolean for tracking test failures
@@ -765,6 +786,11 @@ int main() {
     if (!testGenerateMove()) {
         all_pass = false;
         cout << "testGenerateMove failed" << endl;
+    }
+
+    if (!testSwapColors()) {
+        all_pass = false;
+        cout << "testSwapColors failed" << endl;
     }
 
     if (all_pass)

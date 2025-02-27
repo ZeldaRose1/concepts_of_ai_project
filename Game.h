@@ -28,5 +28,7 @@ class Game {
         vector<Board> generateAdd(Board&);
         vector<Board> generateMove(Board&);
 
+        /* Functions that still need to be implemented */
         // vector<Board> GenerateMovesOpening(Board&);
+        // vector<Board> generateMovesMidgameEndgame(Board&);
 };

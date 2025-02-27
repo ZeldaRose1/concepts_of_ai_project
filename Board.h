@@ -54,5 +54,6 @@ class Board {
 
         // Helper functions
         vector<unsigned short int> neighbors(unsigned short int); // Returns vector of neighbors
+        void swapColors(); // Changes white and black
     };
     

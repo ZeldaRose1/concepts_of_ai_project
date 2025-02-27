@@ -179,3 +179,12 @@ vector<unsigned short int> Board::neighbors(unsigned short int index) {
             return vector<unsigned short int> {};
     }
 }
+
+
+void Board::swapColors() {
+    // Function will swap the board positions of white and black.
+    unsigned long int temp = white;
+    white = black;
+    black = temp;
+    return;
+}
