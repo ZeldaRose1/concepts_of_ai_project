@@ -11,6 +11,8 @@ bool testBoardConstructor(){
     try {
         assert(b.white == 0);
         assert(b.black == 0);
+        assert(b.whiteCount == 0);
+        assert(b.blackCount == 0);
     }
     catch (const exception e) {
         cout << "Exception raised in testBoardConstructor:\t" << e.what() << endl;
@@ -23,8 +25,13 @@ bool testBoardCopyConstructor(){
     // This tests generates random data to fill the board with to 
     // check that the copy constructor functions as planned.
     Board b;
-    b.white = pow(2, b.e4) + pow(2, b.f5) + pow(2, b.g6);
-    b.black = pow(2, b.a0) + pow(2, b.a3) + pow(2, b.a6);
+    b.updateBoard(b.e4, 1);
+    b.updateBoard(b.f5, 1);
+    b.updateBoard(b.g6, 1);
+
+    b.updateBoard(b.a0, -1);
+    b.updateBoard(b.a3, -1);
+    b.updateBoard(b.a6, -1);
 
     // Initialize second board
     Board b2(b);
@@ -33,6 +40,8 @@ bool testBoardCopyConstructor(){
     try {
         assert(b2.white == 4784128);
         assert(b2.black == 1048833);
+        assert(b2.whiteCount == 3);
+        assert(b2.blackCount == 3);
     }
     catch (const exception e) {
         cout << "Exception raised in testBoardConstructor:\t" << e.what() << endl;
@@ -48,6 +57,8 @@ bool testGameConstructor() {
     try {
         assert(b.white == 0);
         assert(b.black == 0);
+        assert(b.whiteCount == 0);
+        assert(b.blackCount == 0);
     } catch (const exception e) {
         cout << "Exception raised in testGameConstructor:\t" << e.what() << endl;
         return false;
@@ -58,8 +69,14 @@ bool testGameConstructor() {
 bool testGameConstructorBoard() {
     // Tests if the default constructor for Game functions
     Board b;
-    b.white = pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g0);
-    b.black = pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6);
+    b.updateBoard(b.a0, 1);
+    b.updateBoard(b.d0, 1);
+    b.updateBoard(b.g0, 1);
+
+    b.updateBoard(b.a6, -1);
+    b.updateBoard(b.d6, -1);
+    b.updateBoard(b.g6, -1);
+    
     Game g(b);
     try {
         assert(g.getBoard().white == 7);
@@ -517,7 +534,10 @@ bool testGenerateRemove() {
     vector<Board> l;
 
     // Setup three black pieces on the board
-    b1.black = pow(2, 22) + pow(2, 20) + pow(2, 2) + pow(2, 0);
+    b1.updateBoard(b1.g6, -1);
+    b1.updateBoard(b1.a6, -1);
+    b1.updateBoard(b1.g0, -1);
+    b1.updateBoard(b1.a0, -1);
     g.generateRemove(b1, l);
 
     // Assert blocks
@@ -718,17 +738,66 @@ bool testSwapColors() {
     /* Validate behavior of Board::swapColors() */
     // Setup initial board
     Board b;
-    b.white = pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3) + pow(2, b.b5);
-    b.black = pow(2, b.a3) + pow(2, b.c2) + pow(2, b.e4) + pow(2, b.f5);
+    // White pieces
+    b.updateBoard(b.a0, 1);
+    b.updateBoard(b.d0, 1);
+    b.updateBoard(b.g3, 1);
+    b.updateBoard(b.b5, 1);
+    b.updateBoard(b.g6, 1);
+    // Black pieces
+    b.updateBoard(b.a3, -1);
+    b.updateBoard(b.c2, -1);
+    b.updateBoard(b.e4, -1);
+    b.updateBoard(b.f5, -1);
 
     try {
         // Swap colors
         b.swapColors();
         // Validate appropriate swap
-        assert(b.black == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3) + pow(2, b.b5));
+        assert(b.black == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3) + pow(2, b.b5) + pow(2, b.g6));
         assert(b.white == pow(2, b.a3) + pow(2, b.c2) + pow(2, b.e4) + pow(2, b.f5));
+        assert(b.whiteCount == 4);
+        assert(b.blackCount == 5);
+
+        // Swap colors
+        b.swapColors();
+        // Validate appropriate swap
+        assert(b.white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3) + pow(2, b.b5) + pow(2, b.g6));
+        assert(b.black == pow(2, b.a3) + pow(2, b.c2) + pow(2, b.e4) + pow(2, b.f5));
+        assert(b.whiteCount == 5);
+        assert(b.blackCount == 4);
     } catch (const exception e) {
         cout << "Exception raised in testSwapColors:\t" << e.what() << endl;
+        return false;
+    }
+    return true;
+}
+
+
+
+bool testSetCounts() {
+    /* Validate behavior of Board::swapColors() */
+    // Setup initial board
+    Board b;
+    b.white = pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3) + pow(2, b.b5);
+    b.black = pow(2, b.a3) + pow(2, b.c2) + pow(2, b.e4) + pow(2, b.f5);
+
+    try {
+        // Swap colors
+        b.setCounts();
+        // Validate appropriate swap
+        assert(b.whiteCount == 4);
+        assert(b.blackCount == 4);
+
+        // Change counts and recheck
+        b.white += pow(2, b.b3) + pow(2, b.d5);
+        b.black += pow(2, b.c3);
+        b.setCounts();
+        assert(b.whiteCount == 6);
+        assert(b.blackCount == 5);
+        
+    } catch (const exception e) {
+        cout << "Exception raised in testSetCounts:\t" << e.what() << endl;
         return false;
     }
     return true;
@@ -791,6 +860,11 @@ int main() {
     if (!testSwapColors()) {
         all_pass = false;
         cout << "testSwapColors failed" << endl;
+    }
+
+    if (!testSetCounts()) {
+        all_pass = false;
+        cout << "testSetCounts failed" << endl;
     }
 
     if (all_pass)

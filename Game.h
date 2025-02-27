@@ -29,6 +29,6 @@ class Game {
         vector<Board> generateMove(Board&);
 
         /* Functions that still need to be implemented */
-        // vector<Board> GenerateMovesOpening(Board&);
-        // vector<Board> generateMovesMidgameEndgame(Board&);
+        // vector<Board> GenerateMovesOpening(Board&); // No pseudocode given // Static estimation for opening
+        // vector<Board> generateMovesMidgameEndgame(Board&); // Only basic logic given
 };

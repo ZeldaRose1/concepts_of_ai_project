@@ -8,7 +8,9 @@ class Board {
         // class variables
         unsigned long int white;
         unsigned long int black;
-        // short int state[23]; // Array of short ints, 1 = white -1 = black 0 = blank
+        unsigned short int whiteCount;
+        unsigned short int blackCount;
+        vector<Board> L;
 
         // Index values for readability
         const static unsigned short int a0 = 0;
@@ -55,5 +57,6 @@ class Board {
         // Helper functions
         vector<unsigned short int> neighbors(unsigned short int); // Returns vector of neighbors
         void swapColors(); // Changes white and black
+        void setCounts(); // Updates the counts for white and black pieces
     };
     
