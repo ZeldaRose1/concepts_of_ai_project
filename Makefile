@@ -1,3 +1,6 @@
+minimax: Game.o Board.o MiniMaxOpening.cpp
+	g++ -o minimax Game.o Board.o MiniMaxOpening.cpp
+
 test: clean test.o Game.h Board.h
 	g++ -o test test.o Game.o Board.o
 	./test
@@ -20,6 +23,12 @@ clean:
 		then \
 		rm test; \
 	fi
+
+	@if \
+		[ -f minimax ]; \
+		then \
+		rm minimax; \
+	fi
 	
 	@if \
 		find . -name "*.o" | grep -q .;\
@@ -33,4 +42,11 @@ clean:
 		rm *.gch; \
 	fi
 
-	
+	@if \
+		[ -f "CoAI_group30_rose_zelda_semester_project.zip" ]; \
+		then \
+		rm CoAI_group30_rose_zelda_semester_project.zip; \
+	fi
+
+zip:
+	zip CoAI_group30_rose_zelda_semester_project.zip *.o *.h *.cpp Makefile README.md

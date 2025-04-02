@@ -1,5 +1,7 @@
 #include <iostream>
+#include <fstream> // Needed for io testing
 #include <cassert>
+#include <stdio.h> // For deleting files
 #include <math.h>
 #include "Game.h"
 using namespace std;
@@ -773,8 +775,6 @@ bool testSwapColors() {
     return true;
 }
 
-
-
 bool testSetCounts() {
     /* Validate behavior of Board::swapColors() */
     // Setup initial board
@@ -803,6 +803,102 @@ bool testSetCounts() {
     return true;
 }
 
+bool testWriteBoard() {
+    // Tests writeBoard function
+    
+    bool success = true;
+
+    // Setup Board
+    Board b1;
+    for (int i = 0; i < 23; i++) {
+        b1.updateBoard(i, pow(-1, i));
+    }
+    
+    // Test phase begin
+    try {
+        // Write board
+        b1.writeBoard("test_write123456789.txt");
+
+        // Initialize in stream and start reading board
+        ifstream i;
+        i.open("test_write123456789.txt");
+        
+        // Initialize string to hold file contents
+        string content;
+        // Load line 1 to string
+        getline(i, content);
+        
+        int offset = 0;
+        for (int i = 0; i < 23; i++) {
+            if (pow(-1, i) == -1)
+                offset += 1;
+            assert (content[i + offset] == '1');
+        }
+
+        // Check turn
+        getline(i, content);
+        assert (atoi(content.c_str()) == 0);
+        
+    } catch (const exception e) { // Fail block
+        cout << "Exception raised in testWriteBoard:\t" << e.what() << endl;
+        success = false;
+    }
+    
+    // Clean file
+    try {remove("test_write123456789.txt");}
+    catch (const exception e) {
+        success = false;
+    }
+
+    return success;
+}
+
+bool testReadBoard() {
+    // Validate performance of Board::readBoard() function
+
+    // Setup
+    bool success = true;
+    ofstream o;
+    o.open("test_read123456789.txt");
+
+    // Populate board with pattern of WB-
+    for (int i = 0; i < 23; i++) {
+        if (i % 3 == 0)
+            o << '1';
+        else if (i % 3 == 1)
+            o << '-' << '1';
+        else
+            o << '0';
+    }
+    // Close file to allow resources
+    o.close();
+
+    // Start assertions
+    try {
+        // Run function
+        Board b("test_read123456789.txt");
+        for (int i = 0; i < 23; i++) {
+            if (i % 3 == 0)
+                assert (b[i] == 1);
+            else if (i % 3 == 1)
+                assert (b[i] == -1);
+            else
+                assert (b[i] == 0);
+        }
+    } catch (const exception e) { // Fail block
+        cout << "Exception raised in testReadBoard:\t" << e.what() << endl;
+        success = false;
+    }
+    
+    // Clean file
+    try {remove("test_read123456789.txt");}
+    catch (const exception e) {
+        success = false;
+    }
+
+    return success;
+
+}
 
 
 int main() {
@@ -865,6 +961,16 @@ int main() {
     if (!testSetCounts()) {
         all_pass = false;
         cout << "testSetCounts failed" << endl;
+    }
+    
+    if (!testWriteBoard()) {
+        all_pass = false;
+        cout << "testWriteBoard failed" << endl;
+    }
+
+    if (!testReadBoard()) {
+        all_pass = false;
+        cout << "testReadBoard failed" << endl;
     }
 
     if (all_pass)

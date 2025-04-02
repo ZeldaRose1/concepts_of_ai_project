@@ -10,6 +10,7 @@ class Board {
         unsigned long int black;
         unsigned short int whiteCount;
         unsigned short int blackCount;
+        bool whiteTurn;
         vector<Board> L;
 
         // Index values for readability
@@ -46,7 +47,8 @@ class Board {
         // Begin class methods
         // Class constructors
         Board();
-        Board(const Board&);
+        Board(const Board&); // Copy constructor
+        Board(const char*); // Constructor from file path
     
         // Class operators
         // Read index operator
@@ -58,5 +60,6 @@ class Board {
         vector<unsigned short int> neighbors(unsigned short int); // Returns vector of neighbors
         void swapColors(); // Changes white and black
         void setCounts(); // Updates the counts for white and black pieces
+        int writeBoard(string); // Saves status of current board to a .txt file
     };
     

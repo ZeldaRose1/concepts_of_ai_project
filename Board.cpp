@@ -1,5 +1,6 @@
 #include "Board.h"
 #include <iostream>
+#include <fstream>
 #include <cmath>
 
 using namespace std;
@@ -10,6 +11,7 @@ Board::Board(){
     black = 0;
     whiteCount = 0;
     blackCount = 0;
+    whiteTurn = 1;
 }
 
 Board::Board(const Board& b) {
@@ -18,6 +20,34 @@ Board::Board(const Board& b) {
     black = b.black;
     whiteCount = b.whiteCount;
     blackCount = b.blackCount;
+    whiteTurn = b.whiteTurn;
+}
+
+Board::Board(const char* in_path) {
+    // Read a board in from a file.
+
+    // Initialize and open file
+    ifstream in;
+    in.open(in_path);
+    string content;
+    (getline(in, content));
+    int offset = 0;
+    for (int i = 0; i < 23; i++) {
+        if (content[i + offset] == '-'){
+            offset += 1;
+            updateBoard(i, -1);
+        } else if (content[i + offset] == '0') {
+            updateBoard(i, 0);
+        } else
+            updateBoard(i, 1);
+    }
+    
+    // Read turn line
+    getline(in, content);
+    whiteTurn = atoi(content.c_str());
+    
+    // Close in file
+    in.close();
 }
 
 // Write index operator
@@ -56,31 +86,37 @@ void Board::updateBoard(short int i, short int val) {
         if (b == 1) {
             black -= static_cast<unsigned long int>(pow(2, i));
             blackCount--;
+            whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
         } if (w == 1)
             return; // Value already matches
         else{
             white += static_cast<unsigned long int>(pow(2, i));
             whiteCount++;
+            whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
         }
 
     } else if (val == -1) { // Set space to black
         if (w == 1){
             white -= static_cast<unsigned long int>(pow(2, i));
             whiteCount--;
+            whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
         } if (b == 1)
             return; // Value already matches
         else {
             black += static_cast<unsigned long int>(pow(2, i)); // Update black
             blackCount++;
+            whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
         }
 
     } else if (val == 0) { // Set space to empty   
         if (w == 1){
             white -= static_cast<unsigned long int>(pow(2, i));
             whiteCount--;
+            whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
         } if (b == 1) {
             black -= static_cast<unsigned long int>(pow(2, i));
             blackCount--;
+            whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
         }
     }
     return;
@@ -224,4 +260,26 @@ void Board::setCounts() {
             blackCount++;
     }
     return;
+}
+
+int Board::writeBoard(string out_path){
+    // Write board to a text file
+    
+    // Initialize out stream
+    ofstream out;
+    // Open file
+    out.open(out_path);
+    if (out.is_open()){
+        // Write file
+        for (int i = 0; i < 23; i++) {
+            out << operator[](i);
+        }
+        // Write new line character and whose turn it is
+        out << "\n" << whiteTurn << endl;
+        return 1;
+    } else {
+        cout << "Error in Board::writeBoard; Could not open file." << endl;
+        return 0;
+    }
+
 }
