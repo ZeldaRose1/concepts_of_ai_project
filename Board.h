@@ -11,6 +11,7 @@ class Board {
         unsigned short int whiteCount;
         unsigned short int blackCount;
         bool whiteTurn;
+        short int gamePhase; // 0 for placement phase 1 for move 2 for jumping
         vector<Board> L;
 
         // Index values for readability

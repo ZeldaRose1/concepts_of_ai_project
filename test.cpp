@@ -838,6 +838,10 @@ bool testWriteBoard() {
         // Check turn
         getline(i, content);
         assert (atoi(content.c_str()) == 0);
+
+        // Check gamePhase
+        getline(i, content);
+        assert (atoi(content.c_str()) == 1);
         
     } catch (const exception e) { // Fail block
         cout << "Exception raised in testWriteBoard:\t" << e.what() << endl;
@@ -870,6 +874,7 @@ bool testReadBoard() {
         else
             o << '0';
     }
+    o << "\n0\n1" << endl;
     // Close file to allow resources
     o.close();
 
@@ -885,6 +890,8 @@ bool testReadBoard() {
             else
                 assert (b[i] == 0);
         }
+        assert(b.whiteTurn == 0);
+        assert(b.gamePhase == 1);
     } catch (const exception e) { // Fail block
         cout << "Exception raised in testReadBoard:\t" << e.what() << endl;
         success = false;

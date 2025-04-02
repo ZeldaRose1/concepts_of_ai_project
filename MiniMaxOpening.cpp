@@ -1,4 +1,5 @@
 #include "Board.h"
+#include "Game.h"
 #include <iostream>
 
 /*
@@ -17,16 +18,10 @@ int main (int argc, char *argv[]) {
         return 1;
     }
 
-    Board b;
-    b.updateBoard(0, 1);
-    b.updateBoard(1, 1);
-    b.updateBoard(2, 1);
+    // Load board
+    Board b(argv[2]);
+    Game g(b);
 
-    b.updateBoard(20, -1);
-    b.updateBoard(21, -1);
-    b.updateBoard(22, -1);
-
-    b.writeBoard(argv[3]);
     
 
     return 0;

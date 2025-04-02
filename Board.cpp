@@ -12,6 +12,7 @@ Board::Board(){
     whiteCount = 0;
     blackCount = 0;
     whiteTurn = 1;
+    gamePhase = 0;
 }
 
 Board::Board(const Board& b) {
@@ -21,6 +22,7 @@ Board::Board(const Board& b) {
     whiteCount = b.whiteCount;
     blackCount = b.blackCount;
     whiteTurn = b.whiteTurn;
+    gamePhase = b.gamePhase;
 }
 
 Board::Board(const char* in_path) {
@@ -45,6 +47,10 @@ Board::Board(const char* in_path) {
     // Read turn line
     getline(in, content);
     whiteTurn = atoi(content.c_str());
+
+    // Read game phase
+    getline(in, content);
+    gamePhase = atoi(content.c_str());
     
     // Close in file
     in.close();
@@ -91,8 +97,11 @@ void Board::updateBoard(short int i, short int val) {
             return; // Value already matches
         else{
             white += static_cast<unsigned long int>(pow(2, i));
-            whiteCount++;
+            whiteCount++; // Increment white count
             whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
+            // Update game phase
+            if (whiteCount == 9 & blackCount == 9 & gamePhase == 0)
+                gamePhase = 1;
         }
 
     } else if (val == -1) { // Set space to black
@@ -106,6 +115,9 @@ void Board::updateBoard(short int i, short int val) {
             black += static_cast<unsigned long int>(pow(2, i)); // Update black
             blackCount++;
             whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
+            // Update game phase
+            if (whiteCount == 9 & blackCount == 9 & gamePhase == 0)
+                gamePhase = 1;
         }
 
     } else if (val == 0) { // Set space to empty   
@@ -274,8 +286,8 @@ int Board::writeBoard(string out_path){
         for (int i = 0; i < 23; i++) {
             out << operator[](i);
         }
-        // Write new line character and whose turn it is
-        out << "\n" << whiteTurn << endl;
+        // Write new turn and gamePhase
+        out << "\n" << whiteTurn << "\n" << gamePhase << endl;
         return 1;
     } else {
         cout << "Error in Board::writeBoard; Could not open file." << endl;
