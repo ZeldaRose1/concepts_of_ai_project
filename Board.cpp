@@ -93,6 +93,9 @@ void Board::updateBoard(short int i, short int val) {
             black -= static_cast<unsigned long int>(pow(2, i));
             blackCount--;
             whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
+            // Check for transition to end game phase
+            if (gamePhase == 1 & blackCount <= 3)
+                gamePhase = 2;
         } if (w == 1)
             return; // Value already matches
         else{
@@ -109,6 +112,9 @@ void Board::updateBoard(short int i, short int val) {
             white -= static_cast<unsigned long int>(pow(2, i));
             whiteCount--;
             whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
+            // Check for transition to end game phase
+            if (gamePhase == 1 & whiteCount <= 3)
+                gamePhase = 2;
         } if (b == 1)
             return; // Value already matches
         else {
@@ -125,10 +131,16 @@ void Board::updateBoard(short int i, short int val) {
             white -= static_cast<unsigned long int>(pow(2, i));
             whiteCount--;
             whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
+            // Check for transition to end game phase
+            if (gamePhase == 1 & whiteCount <= 3)
+                gamePhase = 2;
         } if (b == 1) {
             black -= static_cast<unsigned long int>(pow(2, i));
             blackCount--;
             whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
+            // Check for transition to end game phase
+            if (gamePhase == 1 & blackCount <= 3)
+                gamePhase = 2;
         }
     }
     return;
