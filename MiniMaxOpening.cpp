@@ -1,5 +1,4 @@
 #include "Board.h"
-#include "Game.h"
 #include <iostream>
 
 /*
@@ -20,8 +19,23 @@ int main (int argc, char *argv[]) {
 
     // Load board
     Board b(argv[2]);
-    Game g(b);
 
+    short int iteration = 0;
+    // Loop through the iterations
+    while (iteration < atoi(argv[4])) {
+        // Increment iteration
+        iteration++;
+
+        // Check turn and swap colors if needed
+        if (b.whiteTurn == 0)
+            b.swapColors();
+        
+        // Check for game phase
+        if (b.gamePhase == 0) {
+            b.L = b.generateAdd(b);
+        }
+
+    }
     
 
     return 0;

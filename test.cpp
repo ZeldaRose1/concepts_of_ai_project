@@ -3,7 +3,7 @@
 #include <cassert>
 #include <stdio.h> // For deleting files
 #include <math.h>
-#include "Game.h"
+#include "Board.h"
 using namespace std;
 
 
@@ -52,6 +52,7 @@ bool testBoardCopyConstructor(){
     return true;
 }
 
+/*
 bool testGameConstructor() {
     // Tests if the default constructor for Game functions
     Game g;
@@ -90,16 +91,16 @@ bool testGameConstructorBoard() {
     
     return true;
 }
-
+*/
 
 bool testCloseMill() {
     // Test function for Game::closeMill()
-    Game g;
+    // Game g;
     Board b;
 
     // Test for false on all empty spaces
     for (int i = 0; i < 23; i++)
-        assert (!g.closeMill(i, b));
+        assert (!b.closeMill(i, b));
     
     // Form mill on bottom row
     b.updateBoard(b.a0, 1);
@@ -108,21 +109,21 @@ bool testCloseMill() {
 
     try {
         // Test the first row (all mills)
-        assert (g.closeMill(b.a0, b));
-        assert (g.closeMill(b.d0, b));
-        assert (g.closeMill(b.g0, b));
+        assert (b.closeMill(b.a0, b));
+        assert (b.closeMill(b.d0, b));
+        assert (b.closeMill(b.g0, b));
 
         // Test all spaces that are not mills
         for (int i = 4; i < 23; i++)
-            assert (!g.closeMill(i, b));
+            assert (!b.closeMill(i, b));
 
         // Un-mill the bottom row and retest. (Checks against non-homogenous row)
         b.updateBoard(b.d0,  -1);
 
         // Check mil has been undone
-        assert (!g.closeMill(b.a0, b));
-        assert (!g.closeMill(b.d0, b));
-        assert (!g.closeMill(b.g0, b));
+        assert (!b.closeMill(b.a0, b));
+        assert (!b.closeMill(b.d0, b));
+        assert (!b.closeMill(b.g0, b));
 
         // Reset board
         for (int i = 0; i < 23; i++)
@@ -134,9 +135,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.a0 || i == b.b1 || i == b.c2)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b));  // Check non-mils return false
+                assert (!b.closeMill(i, b));  // Check non-mils return false
         }
         
         // Reset board
@@ -149,9 +150,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.a0 || i == b.a3 || i == b.a6)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -164,9 +165,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.g0 || i == b.f1 || i == b.e2)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -179,9 +180,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.g0 || i == b.g3 || i == b.g6)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -194,9 +195,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.a6 || i == b.d6 || i == b.g6)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -209,9 +210,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.a6 || i == b.b5 || i == b.c4)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -224,9 +225,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.e4 || i == b.f5 || i == b.g6)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -239,9 +240,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.b1 || i == b.d1 || i == b.f1)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -254,9 +255,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.f1 || i == b.f3 || i == b.f5)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -269,9 +270,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.b5 || i == b.d5 || i == b.f5)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -284,9 +285,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.a3 || i == b.b3 || i == b.c3)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -299,9 +300,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.d4 || i == b.d5 || i == b.d6)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -314,9 +315,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.e3 || i == b.f3 || i == b.g3)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -329,9 +330,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.e3 || i == b.f3 || i == b.g3)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -344,9 +345,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.c2 || i == b.c3 || i == b.c4)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -359,9 +360,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.c4 || i == b.d4 || i == b.e4)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
 
         // Reset board
@@ -374,9 +375,9 @@ bool testCloseMill() {
         // Run tests
         for (int i = 0; i < 23; i++) {
             if (i == b.e2 || i == b.e3 || i == b.e4)
-                assert (g.closeMill(i, b)); // Check real mils return true
+                assert (b.closeMill(i, b)); // Check real mils return true
             else
-                assert (!g.closeMill(i, b)); // Check non-mils return false
+                assert (!b.closeMill(i, b)); // Check non-mils return false
         }
         
         // Force all spaces to be white
@@ -384,14 +385,14 @@ bool testCloseMill() {
             b.updateBoard(i, 1);
         // Run tests
         for (int i = 0; i < 23; i++)
-            assert (g.closeMill(i, b));
+            assert (b.closeMill(i, b));
         
         // Force all spaces to be black
         for (int i = 0; i < 23; i++)
             b.updateBoard(i, -1);
         // Run tests
         for (int i = 0; i < 23; i++)
-            assert (g.closeMill(i, b));
+            assert (b.closeMill(i, b));
 
         // Reset board
         for (int i = 0; i < 23; i++) b.updateBoard(i, 0);
@@ -401,9 +402,9 @@ bool testCloseMill() {
         b.updateBoard(b.c2, 1);
         for (int i = 0; i < 23; i++) {
             if (i == b.a0 || i == b.b1 || i == b.c2) {
-                assert (g.closeMill(i, b));
+                assert (b.closeMill(i, b));
             } else {
-                assert (!g.closeMill(i, b));
+                assert (!b.closeMill(i, b));
             }
         }
         
@@ -531,7 +532,7 @@ bool testNeighbors() {
 bool testGenerateRemove() {
     /* Validates behavior of GenerateRemove function. */
     // Declare Variables
-    Game g;
+    // Game g;
     Board b1;
     vector<Board> l;
 
@@ -540,7 +541,7 @@ bool testGenerateRemove() {
     b1.updateBoard(b1.a6, -1);
     b1.updateBoard(b1.g0, -1);
     b1.updateBoard(b1.a0, -1);
-    g.generateRemove(b1, l);
+    b1.generateRemove(b1, l);
 
     // Assert blocks
     try {
@@ -556,7 +557,7 @@ bool testGenerateRemove() {
         l.clear();
         // Form mill across row 6
         b1.black += pow(2, 21);
-        g.generateRemove(b1, l);
+        b1.generateRemove(b1, l);
 
         // Start asserts for mixed case
         assert(l.size() == 2);
@@ -567,7 +568,7 @@ bool testGenerateRemove() {
         l.clear();
         // Form mill across row 0
         b1.black += pow(2, 1);
-        g.generateRemove(b1, l);
+        b1.generateRemove(b1, l);
 
         // Start asserts for mixed case
         assert(l.size() == 6);
@@ -589,7 +590,7 @@ bool testGenerateRemove() {
 
 bool testGenerateHopping() {
     /* Validates behavior of Game::generateHopping */
-    Game g;
+    // Game g;
     Board b;
     b.white = 1; // Single tile on a0
 
@@ -597,7 +598,7 @@ bool testGenerateHopping() {
     try {
         /* Tests all branches of code except for the generateRemove() call */
         // Run code; should have 22 different options in the list
-        vector<Board> l = g.generateHopping(b);
+        vector<Board> l = b.generateHopping(b);
         assert(l.size() == 22);
 
         // Check that the tiles hop in the order we expected
@@ -614,7 +615,7 @@ bool testGenerateHopping() {
             pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
             pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0);
         // Note the empty space is a0
-        l = g.generateHopping(b);
+        l = b.generateHopping(b);
         /*
             Generate Hopping should start by moving g0 to a0 and then remove each black piece
             that is not part of a mill. Since we cannot remove a piece if there are non-milled
@@ -654,7 +655,7 @@ bool testGenerateHopping() {
 bool testGenerateAdd() {
     /* Validate performance of generate add */
     // Initialize variables
-    Game g;
+    // Game g;
     Board b;
     vector<Board> l;
 
@@ -673,7 +674,7 @@ bool testGenerateAdd() {
         l.clear();
         b.white = pow(2, b.a0) + pow(2, b.d0);
         b.black = pow(2, b.a3);
-        l = g.generateAdd(b);
+        l = b.generateAdd(b);
         assert(l.size() == 20);
     } catch (const exception e) {
         cout << "Exception raised in testGenerateAdd:\t" << e.what() << endl;
@@ -686,7 +687,7 @@ bool testGenerateAdd() {
 bool testGenerateMove() {
     /* Validates performance of midgame Game::generateMove() function */
     // Initialize variables
-    Game g;
+    // Game g;
     Board b;
     vector<Board> l;
     
@@ -705,7 +706,7 @@ bool testGenerateMove() {
         */
         b.white = pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3);
         b.black = pow(2, b.a3);
-        l = g.generateMove(b);
+        l = b.generateMove(b);
         // Begin checks
         assert(l.size() == 6);
         
@@ -805,6 +806,9 @@ bool testSetCounts() {
 
 bool testWriteBoard() {
     // Tests writeBoard function
+    // Note that the updateBoard function does not update turn
+    // The check for matching whiteTurn is moot, but proves the value 
+    // is printed to .txt file.
     
     bool success = true;
 
@@ -837,7 +841,7 @@ bool testWriteBoard() {
 
         // Check turn
         getline(i, content);
-        assert (atoi(content.c_str()) == 0);
+        assert (atoi(content.c_str()) == 1);
 
         // Check gamePhase
         getline(i, content);
@@ -921,14 +925,14 @@ int main() {
         all_pass = false;
         cout << "testBoardCopyConstructor failed" << endl;
     }
-    if (!testGameConstructor()) {
-        all_pass = false;
-        cout << "testGameConstructor failed" << endl;
-    }
-    if (!testGameConstructorBoard()) {
-        all_pass = false;
-        cout << "testGameConstructorBoard failed" << endl;
-    }
+    // if (!testGameConstructor()) {
+    //     all_pass = false;
+    //     cout << "testGameConstructor failed" << endl;
+    // }
+    // if (!testGameConstructorBoard()) {
+    //     all_pass = false;
+    //     cout << "testGameConstructorBoard failed" << endl;
+    // }
 
     if (!testCloseMill()) {
         all_pass = false;

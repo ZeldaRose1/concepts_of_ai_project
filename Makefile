@@ -1,12 +1,12 @@
-minimax: Game.o Board.o MiniMaxOpening.cpp
-	g++ -o minimax Game.o Board.o MiniMaxOpening.cpp
+minimax: Board.o MiniMaxOpening.cpp
+	g++ -o minimax Board.o MiniMaxOpening.cpp
 
-test: clean test.o Game.h Board.h
-	g++ -o test test.o Game.o Board.o
+test: clean test.o Board.h
+	g++ -o test test.o Board.o
 	./test
 
-debug: clean test.o Game.h Board.h
-	g++ -o test test.o Game.o Board.o
+debug: clean test.o  Board.h
+	g++ -o test test.o Board.o
 
 test.o: test.cpp Game.o Board.h
 	g++ -c -g test.cpp Game.h Board.h

@@ -10,6 +10,7 @@ class Board {
         unsigned long int black;
         unsigned short int whiteCount;
         unsigned short int blackCount;
+        int heuristic;
         bool whiteTurn;
         short int gamePhase; // 0 for placement phase 1 for move 2 for jumping
         vector<Board> L;
@@ -55,12 +56,25 @@ class Board {
         // Read index operator
         short int operator[](int); // Overload [] operator to read value
         void updateBoard(short int, short int); // index, (+1, 0, or -1) for val
+        int writeBoard(string); // Saves status of current board to a .txt file
+        int staticEstimate(); // Calculates heuristic
+        
+        
+        // Generate list functions (Build tree)
+        bool closeMill(short int, Board& b); // Input board location; returns T/F if move completes a mill
+        void generateRemove(Board&, vector<Board>&);
+        vector<Board> generateHopping(Board&);
+        vector<Board> generateAdd(Board&);
+        vector<Board> generateMove(Board&);
+        vector<Board> generateNextLevel(Board&); // Conglomerate of above 3
+        Board miniMaxSearch(Board&);
 
 
         // Helper functions
         vector<unsigned short int> neighbors(unsigned short int); // Returns vector of neighbors
         void swapColors(); // Changes white and black
         void setCounts(); // Updates the counts for white and black pieces
-        int writeBoard(string); // Saves status of current board to a .txt file
+        int minMax(Board&);
+        int maxMin(Board&);
     };
     

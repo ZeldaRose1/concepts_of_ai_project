@@ -338,3 +338,4 @@ vector<Board> Game::generateMove(Board& b) {
 
     return l;
 }
+
