@@ -704,47 +704,181 @@ bool testGenerateAdd() {
 bool testGenerateMove() {
     /* Validates performance of midgame Game::generateMove() function */
     // Initialize variables
-    // Game g;
     Board b;
     vector<Board> l;
     
     // Start testing
     try{
         /*
-            Setting up a board to test for all posibilities of the code
-            White has a0, d0, and g3 while black has a3.
-            
-            This means that a0 will have one move,
-            d0 will have two moves,
-            and g3 will have 3 moves, one of which will be a mill
-            and remove black's a3 tile.
-
-            In total we can expect 6 outcomes from this test.
+            We have four cases to try based on if it's white's turn and if
+            we trigger a mill. We will test these one at a time.
         */
-        b.white = pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3);
-        b.black = pow(2, b.a3);
+
+        // Test 1: White's turn, no mill
+        // Setup: White piece at a0 that can move to d0 (connected neighbors)
+        l.clear();
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.b1, -1);
+        b.updateBoard(b.d1, -1);
+        b.updateBoard(b.f1, -1);
+        b.whiteTurn = true;
         l = b.generateMove(b);
-        // Begin checks
-        assert(l.size() == 6);
         
-        // Check first entry
-        assert(l[0].white == pow(2, b.b1) + pow(2, b.d0) + pow(2, b.g3));
-        assert(l[0].black == pow(2, b.a3));
-        // Check second entry
-        assert(l[1].white == pow(2, b.a0) + pow(2, b.g0) + pow(2, b.g3));
-        assert(l[1].black == pow(2, b.a3));
-        // Check third entry
-        assert(l[2].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g3));
-        assert(l[2].black == pow(2, b.a3));
-        // Check fourth entry
-        assert(l[3].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g0));
-        assert(l[3].black == 0);
-        // Check fifth entry
-        assert(l[4].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.f3));
-        assert(l[4].black == pow(2, b.a3));
-        // Check sixth and final entry
-        assert(l[5].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g6));
-        assert(l[5].black == pow(2, b.a3));
+        // Should generate a move from a0 - a3 and a move from g0 - g3
+        assert(l.size() == 2);
+        assert(l[0].white == pow(2, b.d0) + pow(2, b.g0) + pow(2, b.a3));
+        assert(l[0].black == pow(2, b.b1) + pow(2, b.d1) + pow(2, b.f1));
+        assert(l[0].whiteTurn == false);
+        assert(l[1].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g3));
+        assert(l[1].black == pow(2, b.b1) + pow(2, b.d1) + pow(2, b.f1));
+        assert(l[1].whiteTurn == false);
+
+        // Test 2: White's turn, with mill
+        // Setup: White piece at a0 that can move to d0 (connected neighbors)
+        l.clear();
+        // b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 0); // Reset from first test
+        b.updateBoard(b.d1, 1);
+        // b.updateBoard(b.g0, 1);
+        b.updateBoard(b.b1, -1);
+        b.updateBoard(b.d6, -1);
+        b.updateBoard(b.f1, -1);
+        l = b.generateMove(b);
+
+        // Assert section
+        assert(l.size() == 7);
+        // Move a0 - d0
+        assert(l[0].white == pow(2, b.d1) + pow(2, b.g0) + pow(2, b.d0));
+        assert(l[0].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.f1));
+        assert(l[0].whiteTurn == false);
+
+        // Move a0 - a3
+        assert(l[1].white == pow(2, b.d1) + pow(2, b.g0) + pow(2, b.a3));
+        assert(l[1].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.f1));
+        assert(l[1].whiteTurn == false);
+        
+        // Move g0 - d0
+        assert(l[2].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.d1));
+        assert(l[2].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.f1));
+        assert(l[2].whiteTurn == false);
+
+        // Move g0 - g3
+        assert(l[3].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g3));
+        assert(l[3].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.f1));
+        assert(l[3].whiteTurn == false);
+
+        // Move d1 - d0; Remove b1
+        assert(l[4].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g0));
+        assert(l[4].black == pow(2, b.d6) + pow(2, b.f1));
+        assert(l[4].whiteTurn == false);
+
+        // Move d1 - d0; Remove f1
+        assert(l[5].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g0));
+        assert(l[5].black == pow(2, b.b1) + pow(2, b.d6));
+        assert(l[5].whiteTurn == false);
+
+        // Move d1 - d0; Remove b6
+        assert(l[6].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, b.g0));
+        assert(l[6].black == pow(2, b.b1) + pow(2, b.f1));
+        assert(l[6].whiteTurn == false);
+
+        // Test 3: Black No mils
+        // b.updateBoard(b.d6, 0);
+        l.clear();
+        b.whiteTurn = false;
+        l = b.generateMove(b);
+
+        assert(l.size() == 7);
+        
+        // Move b1 - c2
+        assert(l[0].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        assert(l[0].black == pow(2, b.c2) + pow(2, b.d6) + pow(2, b.f1));
+        assert(l[0].whiteTurn == true);
+        
+        // Move b1 - b3
+        assert(l[1].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        assert(l[1].black == pow(2, b.b3) + pow(2, b.d6) + pow(2, b.f1));
+        assert(l[1].whiteTurn == true);
+
+        // Move f1 - e2
+        assert(l[2].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        assert(l[2].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.e2));
+        assert(l[2].whiteTurn == true);
+
+        // Move f1 - f3
+        assert(l[3].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        assert(l[3].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.f3));
+        assert(l[3].whiteTurn == true);
+
+        // Move d6 - d5
+        assert(l[4].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        assert(l[4].black == pow(2, b.b1) + pow(2, b.d5) + pow(2, b.f1));
+        assert(l[4].whiteTurn == true);
+
+        // Move d6 - a6
+        assert(l[5].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        assert(l[5].black == pow(2, b.b1) + pow(2, b.a6) + pow(2, b.f1));
+        assert(l[5].whiteTurn == true);
+        // Move d6 - g6
+        assert(l[6].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        assert(l[6].black == pow(2, b.b1) + pow(2, b.g6) + pow(2, b.f1));
+        assert(l[6].whiteTurn == true);
+
+        // Test 4: Black with mill
+        
+        // Move black pieces to prepare for mill in top row.
+        b.updateBoard(b.a6, -1);
+        b.updateBoard(b.g3, -1);
+        b.updateBoard(b.b1, 0);
+        b.updateBoard(b.f1, 0);
+
+        // Move white pieces to be reduce number of black moves
+        b.updateBoard(b.a0, 0);
+        b.updateBoard(b.d1, 0);
+        b.updateBoard(b.g0, 0);
+        b.updateBoard(b.a3, 1);
+        b.updateBoard(b.d5, 1);
+        b.updateBoard(b.b5, 1);
+        
+        // Clear board and regenerate moves
+        l.clear();
+        l = b.generateMove(b);
+
+        cout << "Starting board position: ";
+        b.printBoard();
+        cout << endl;
+
+        // Move g3 - g0
+        assert(l[0].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
+        assert(l[0].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g0));
+        assert(l[0].whiteTurn == true);
+
+        // Move g3 - f3
+        assert(l[1].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
+        assert(l[1].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.f3));
+        assert(l[1].whiteTurn == true);
+
+        // Move g3 - g6; Remove a3
+        assert(l[2].white == pow(2, b.b5) + pow(2, b.d5));
+        assert(l[2].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        assert(l[2].whiteTurn == true);
+
+        // Move g3 - g6; Remove b5
+        assert(l[3].white == pow(2, b.a3) + pow(2, b.d5));
+        assert(l[3].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        assert(l[3].whiteTurn == true);
+
+        // Move g3 - g6; Remove d5
+        assert(l[4].white == pow(2, b.a3) + pow(2, b.b5));
+        assert(l[4].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        assert(l[4].whiteTurn == true);
+
+        // Move d6 - g6
+        assert(l[5].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
+        assert(l[5].black == pow(2, b.a6) + pow(2, b.g6) + pow(2, b.g3));
+        assert(l[5].whiteTurn == true);
 
     } catch (const exception e) {
         cout << "Exception raised in testGenerateMove:\t" << e.what() << endl;
@@ -753,7 +887,6 @@ bool testGenerateMove() {
     
     return true;
 }
-
 bool testSwapColors() {
     /* Validate behavior of Board::swapColors() */
     // Setup initial board
@@ -945,7 +1078,6 @@ bool testReadBoard() {
     return success;
 
 }
-
 
 
 

@@ -81,6 +81,19 @@ Board::Board(const char* in_path) {
     in.close();
 }
 
+void Board::printBoard() {
+    for (int i = 0; i < 23; i++){
+        if (operator[](i) == -1)
+            cout << 'B';
+        else if (operator[](i) == 1)
+            cout << 'W';
+        else if (operator[](i) == 0)
+            cout << 'x';
+        else
+            cout << ' ';
+    }
+};
+
 // Write index operator
 void Board::updateBoard(short int i, short int val) {
     /*
@@ -725,13 +738,14 @@ vector<Board> Board::generateMove(Board& b) {
                     b_copy.updateBoard(i, 0);
                     b_copy.updateBoard(n[j], 1);
                     // Check for mills
-                    if (closeMill(n[j], b_copy))
+                    if (closeMill(n[j], b_copy)){
                         generateRemove(b_copy, l);
-                    else {  // If there are no pieces to remove push the board as is
+                    } else {  // If there are no pieces to remove push the board as is
                         
                         // Swap colors only if false-white
-                        if (b_copy.whiteTurn == false)
+                        if (b_copy.whiteTurn == false){
                             b_copy.swapColors();
+                        }
                         
                         // Update turn
                         b_copy.whiteTurn = !b_copy.whiteTurn;

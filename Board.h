@@ -71,6 +71,7 @@ class Board {
 
 
         // Helper functions
+        void printBoard();
         vector<unsigned short int> neighbors(unsigned short int); // Returns vector of neighbors
         void swapColors(); // Changes white and black
         void setCounts(); // Updates the counts for white and black pieces
