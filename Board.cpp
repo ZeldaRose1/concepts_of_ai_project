@@ -480,7 +480,7 @@ bool Board::closeMill(short int i, Board& b){
         case 15: // d4
             if (
                 (b[b.c4] == val && b[b.e4] == val) ||
-                (b[b.d5] == val && b[b.d5] == val)
+                (b[b.d5] == val && b[b.d6] == val)
             ) return true;
             else return false;
             break;
@@ -630,14 +630,16 @@ vector<Board> Board::generateHopping(Board& b) {
                     b2.updateBoard(j, 1);
                     
                     // If we can create a mill
-                    if (closeMill(j, b2))
+                    if (closeMill(j, b2)){
                         // Add all possible removals to list
                         generateRemove(b2, l);
-                    else{ // Otherwise, just push back the current board
+                    
+                    } else { // Otherwise, just push back the current board
                         
                         // Correct false-white
-                        if (b2.whiteTurn == false)
+                        if (b2.whiteTurn == false){
                             b2.swapColors();
+                        }
                         // Update turn
                         b2.whiteTurn = !b2.whiteTurn;
                         // Push board to list
@@ -746,7 +748,7 @@ vector<Board> Board::generateMove(Board& b) {
                         if (b_copy.whiteTurn == false){
                             b_copy.swapColors();
                         }
-                        
+
                         // Update turn
                         b_copy.whiteTurn = !b_copy.whiteTurn;
                         

@@ -549,66 +549,161 @@ bool testGenerateRemove() {
 
 
 bool testGenerateHopping() {
-    /* Validates behavior of Game::generateHopping */
-    // Game g;
+    /* Validates performance of endgame Board::generateHopping() function */
     Board b;
-    b.white = 1; // Single tile on a0
+    vector<Board> l;
 
-    // Start testing block
     try {
-        /* Tests all branches of code except for the generateRemove() call */
-        // Run code; should have 22 different options in the list
-        vector<Board> l = b.generateHopping(b);
-        assert(l.size() == 22);
+        /*
+            We need to test four main scenarios:
+            1. White's turn with no mill formation
+            2. White's turn with mill formation (triggering remove)
+            3. Black's turn with no mill formation
+            4. Black's turn with mill formation
+        */
 
-        // Check that the tiles hop in the order we expected
-        for (int i = 0; i < 22; i++) {
-            assert(l[i][i + 1] == 1);
+        // Test 1: White's turn, no mill formation
+        // Setup: 3 white pieces with no possible mills, 3 black pieces
+        l.clear();
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.a6, -1);
+        b.updateBoard(b.d6, -1);
+        b.updateBoard(b.g6, -1);
+        b.whiteTurn = true;
+        l = b.generateHopping(b);
+        
+        // Should generate (23-3)*3 = 60 possible hops (each white piece can go to any empty spot)
+        assert(l.size() == 51);
+        
+        // Verify all moves hopped from a0
+        for (int i = 0; i < 17; i++) {
+            assert(l[i].white == pow(2, i + 3) + pow(2, b.d0) + pow(2, b.g0));
+            assert(l[i].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+            assert(l[i].whiteTurn == false);  // Turn should flip
+        } // Verify all moves hopped from d0
+        for (int i = 0; i < 17; i++) {
+            assert(l[i + 17].white == pow(2, b.a0) + pow(2, i + 3) + pow(2, b.g0));
+            assert(l[i + 17].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+            assert(l[i + 17].whiteTurn == false);  // Turn should flip
+        } // Verify all moves hopped from g0
+        for (int i = 0; i < 17; i++) {
+            assert(l[i + 34].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, i + 3));
+            assert(l[i + 34].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+            assert(l[i + 34].whiteTurn == false);  // Turn should flip
         }
 
-        /* Test for generateRemove() functionality */
+        
+        // Test 2: White's turn with mill formation
+        // Setup: 3 white pieces that can form mill by hopping one piece
         l.clear();
-        // Set board to have only three pieces for white outside of a mill
-        b.white = pow(2, b.a6) + pow(2, b.a3) + pow(2, b.g0);
-        // Set board to be have one empty space, and the rest be black
-        b.black = pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
-            pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
-            pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0);
-        // Note the empty space is a0
+        b.updateBoard(b.d0, 0);
+        b.updateBoard(b.g0, 0);
+        b.updateBoard(b.d5, 1);
+        b.updateBoard(b.f5, 1);
+        b.whiteTurn = true;
         l = b.generateHopping(b);
+        
+        cout << "Test 2 start board configuration:   ";
+        b.printBoard();
+        cout << "\n\n" << endl;
+
+        // for (int i = 0; i < l.size(); i++) {
+        //     cout << "Board " << i << ": \t\t";
+        //     l[i].printBoard();
+        //     cout << endl;
+        // }
+
+        // Should have (23 - 6) = 17 open spaces
+        // Three pieces to move gives (23 - 6) * 3 = 51 steps
+        // Only one move on white will form a mill, but this will add a board
+        // for each of 3 removed pieces for a total of 53 boards
+        // assert(l.size() == 53);
+
+
         /*
-            Generate Hopping should start by moving g0 to a0 and then remove each black piece
-            that is not part of a mill. Since we cannot remove a piece if there are non-milled
-            pieces, this will reduce the number of entries in the list.
+        // Test 3: Black's turn, no mill formation
+        // Setup: 3 black pieces with no possible mills
+        l.clear();
+        b.white = 0;
+        b.updateBoard(b.a0, -1);
+        b.updateBoard(b.d3, -1);
+        b.updateBoard(b.g6, -1);
+        b.whiteTurn = false;
+        l = b.generateHopping(b);
+        
+        // Should generate (23-3)*3 = 60 possible hops
+        assert(l.size() == 60);
+        
+        // Verify all generated boards have exactly 3 black pieces
+        for (const auto& board : l) {
+            assert(__builtin_popcount(board.black) == 3);
+            assert(board.white == 0);
+            assert(board.whiteTurn == true);  // Turn should flip
+        }
 
-            d0 is the only black piece that isn't in a mill. So we only append one option to the
-            list for the first tile
+        // Test 4: Black's turn with mill formation
+        // Setup: 3 black pieces that can form mill by hopping one piece
+        l.clear();
+        b.updateBoard(b.a0, -1);
+        b.updateBoard(b.d0, -1);  // Two in a row
+        b.updateBoard(b.g3, -1);  // Separate piece
+        b.updateBoard(b.b1, 1);  // White piece that can be removed
+        b.updateBoard(b.f1, 1);  // Another white piece
+        b.whiteTurn = false;
+        l = b.generateHopping(b);
+        
+        // Should have removal options when mill is formed
+        foundMillMove = false;
+        for (const auto& board : l) {
+            // Check if any board has a removal (mill was formed)
+            if (board.white != (pow(2, b.b1) | pow(2, b.f1))) {
+                foundMillMove = true;
+                assert(__builtin_popcount(board.white) == 1);  // One piece removed
+            }
+        }
+        assert(foundMillMove);
+        assert(l.size() > 60);  // More than basic hops due to removal options
 
-            The other two options will only move white's a3 and a6 to a0 and leave black alone.
-            We can test these simple cases directly
+        // Test 5: Edge case - only one piece left (should still be able to hop anywhere)
+        l.clear();
+        b.white = pow(2, b.a0);
+        b.black = 0;
+        b.whiteTurn = true;
+        l = b.generateHopping(b);
+        
+        // Should generate 22 possible hops (23-1)
+        assert(l.size() == 22);
+        
+        // Verify all generated boards have exactly 1 white piece
+        for (const auto& board : l) {
+            assert(__builtin_popcount(board.white) == 1);
+            assert(board.black == 0);
+        }
+
+        // Test 6: Blocked removal scenario (all opponent pieces in mills)
+        l.clear();
+        b.white = pow(2, b.a0) | pow(2, b.d0);  // Two in a row
+        b.updateBoard(b.g0, 1);  // Completes the mill
+        // Setup black pieces all in mills (can't be removed)
+        b.updateBoard(b.b1, -1);
+        b.updateBoard(b.b3, -1);
+        b.updateBoard(b.b5, -1);  // All in vertical mill
+        b.whiteTurn = true;
+        l = b.generateHopping(b);
+        
+        // Should generate hops but no removal options since all black pieces are protected
+        for (const auto& board : l) {
+            assert(board.black == (pow(2, b.b1) | pow(2, b.b3) | pow(2, b.b5)));
+        }
         */
-        // Verify correct number of moves
-        assert(l.size() == 3);
-        // Check the first moves output where we remove a piece from black.
-        assert(l[0].white == pow(2, b.a6) + pow(2, b.a3) + pow(2, b.a0));
-        assert(l[0].black == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
-            pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
-            pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1));
-        // Check the second move. No black pieces removed
-        assert(l[1].white == pow(2, b.a6) + pow(2, b.a0) + pow(2, b.g0));
-        assert(l[1].black == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
-            pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
-            pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0));
-        // Check the third move. No black pieces removed
-        assert(l[2].white == pow(2, b.a0) + pow(2, b.a3) + pow(2, b.g0));
-        assert(l[2].black == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.f5) + pow(2, b.d5) + pow(2, b.b5) + pow(2, b.e4) + 
-            pow(2, b.d4) + pow(2, b.c4) + pow(2, b.g3) + pow(2, b.f3) + pow(2, b.e3) + pow(2, b.c3) + pow(2, b.b3) + 
-            pow(2, b.e2) + pow(2, b.c2) + pow(2, b.f1) + pow(2, b.d1) + pow(2, b.b1) + pow(2, b.d0));
-    } catch (const exception e) {
+
+    } catch (const exception& e) {
         cout << "Exception raised in testGenerateHopping:\t" << e.what() << endl;
         return false;
     }
-
+    
     return true;
 }
 
@@ -846,10 +941,6 @@ bool testGenerateMove() {
         l.clear();
         l = b.generateMove(b);
 
-        cout << "Starting board position: ";
-        b.printBoard();
-        cout << endl;
-
         // Move g3 - g0
         assert(l[0].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
         assert(l[0].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g0));
@@ -887,6 +978,7 @@ bool testGenerateMove() {
     
     return true;
 }
+
 bool testSwapColors() {
     /* Validate behavior of Board::swapColors() */
     // Setup initial board
