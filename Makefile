@@ -1,5 +1,5 @@
-minimax: Board.o MiniMaxOpening.cpp
-	g++ -o minimax Board.o MiniMaxOpening.cpp
+minimax: Board.o MiniMaxOpening.cpp Board.cpp
+	g++ -g -o minimax Board.o MiniMaxOpening.cpp
 
 test: clean test.o Board.h
 	g++ -o test test.o Board.o

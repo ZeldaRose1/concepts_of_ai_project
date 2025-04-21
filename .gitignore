@@ -1,6 +1,10 @@
 # Zelda added files
 .vscode/*
 .vscode
+input/*
+output/*
+input
+output
 
 # Compiled files
 test

@@ -67,14 +67,14 @@ class Board {
         vector<Board> generateAdd(Board&);
         vector<Board> generateMove(Board&);
         vector<Board> generateNextLevel(Board&); // Conglomerate of above 3
-        Board miniMaxSearch(Board&);
+        Board miniMaxSearch(Board&, int, int&);
 
 
         // Helper functions
         vector<unsigned short int> neighbors(unsigned short int); // Returns vector of neighbors
         void swapColors(); // Changes white and black
         void setCounts(); // Updates the counts for white and black pieces
-        int minMax(Board&);
-        int maxMin(Board&);
+        int minMax(Board&, int, int, int&);
+        int maxMin(Board&, int, int, int&);
     };
     

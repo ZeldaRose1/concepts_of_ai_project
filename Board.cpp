@@ -28,9 +28,29 @@ Board::Board(const Board& b) {
 }
 
 Board::Board(const char* in_path) {
-    // Read a board in from a file.
+    /*
+        Read a board in from a txt file.
+        txt file must follow strict formatting:
+            first line is a description of the board with 1's
+            being white pieces, -1's being black pieces,
+            and 0's being empty
+
+            Second line is a single int with 1 being white's turn
+            and 0 being black's turn.
+            
+            Third line is a single int with 0 being the opening phase,
+            1 being the midgame phase, and 2 being the endgame phase.
+    */
 
     // Initialize and open file
+    white = 0;
+    black = 0;
+    whiteCount = 0;
+    blackCount = 0;
+    whiteTurn = 1;
+    gamePhase = 1;
+    heuristic = 0;
+
     ifstream in;
     in.open(in_path);
     string content;
@@ -276,7 +296,7 @@ void Board::swapColors() {
     blackCount = tempCount;
     
     // Toggle turn variable
-    whiteTurn == 1 ? 0 : 1;
+    // whiteTurn == 1 ? 0 : 1; // I think this is causing a double swap of turn variable
 
     return;
 }
@@ -300,6 +320,10 @@ void Board::setCounts() {
 int Board::writeBoard(string out_path){
     // Write board to a text file
     
+    // Terminate if out_path == "test"
+    if (out_path == "test")
+        return 1;
+
     // Initialize out stream
     ofstream out;
     // Open file
@@ -508,35 +532,75 @@ bool Board::closeMill(short int i, Board& b){
 
 void Board::generateRemove(Board& b, vector<Board>& l) {
     // Generate a list of all possible black removals and insert into list l
+
+    // // If not white swap to false-white
+    // if (b.whiteTurn == false)
+    //     b.swapColors();
+
     for (int i = 0; i < 23; i++) {
         if (b[i] == -1) {
             if (!closeMill(i, b)) {
+                // Copy board
                 Board b2(b);
+                
+                // Update board
                 b2.updateBoard(i, 0);
-                b2.whiteTurn == 1 ? 0 : 1;
+                
+                // Revert to white
+                if (b2.whiteTurn == false)
+                    b2.swapColors();
+                
+                // Update turn
+                b2.whiteTurn = !b2.whiteTurn;
+
+                // Push to list
                 l.push_back(b2);
             }
         }
     }
     // If we have any values in the list, we are done.
     if (l.size() > 0)
+    {
+        // // Revert from false-white
+        // if (b.whiteTurn == false)
+        //     b.swapColors();
         return;
+    }
     
     // If we cannot remove an unprotected piece, we remove a piece with a mil.
     for (int i = 0; i < 23; i++) {
         if (b[i] == -1) {
+            // Clone board
             Board b2(b);
+
+            // Update board
             b2.updateBoard(i, 0);
-            b2.whiteTurn == 1 ? 0 : 1;
+
+            // Revert to true-white
+            if (b2.whiteTurn == false)
+                b2.swapColors();
+
+            // Update turn
+            b2.whiteTurn = !b2.whiteTurn;
+
+            // Append to list
             l.push_back(b2);
         }
     }
+    // // Revert back to true-white
+    // if (b.whiteTurn == false)
+    //     b.swapColors();
+
 }
 
 vector<Board> Board::generateHopping(Board& b) {
     /* Generates a list of Board positions during the endgame */
     // Initialize variables
     vector<Board> l;
+    
+    // Change board to false white
+    if (b.whiteTurn == false)
+        b.swapColors();
 
     // Start outer loop
     for (int i = 0; i < 23; i++) { // Loop checks all owned pieces
@@ -556,26 +620,48 @@ vector<Board> Board::generateHopping(Board& b) {
                     if (closeMill(j, b2))
                         // Add all possible removals to list
                         generateRemove(b2, l);
-                    else{
-                        // Otherwise, just push back the current board
-                        b2.whiteTurn == 1 ? 0 : 1;
+                    else{ // Otherwise, just push back the current board
+                        
+                        // Correct false-white
+                        if (b2.whiteTurn == false)
+                            b2.swapColors();
+                        // Update turn
+                        b2.whiteTurn = !b2.whiteTurn;
+                        // Push board to list
                         l.push_back(b2);
                     }
                 }
             }
         }
     }
+
+    // Revert the board so white is white
+    if (b.whiteTurn == false)
+        b.swapColors();
+
     return l;
 }
 
 vector<Board> Board::generateAdd(Board& b) {
     /*
         This function will add a tile to the board.
-        White is assumed to be the player in this case.
+        This will only be called during the opening phase.
+
+        Operates under the assumption that white is moving.
+        If it is not white's turn, generateAdd() will swap
+        the colors, generate the moves, and swap back before
+        returning the list.
+        
+        This function will also check for mills and generate
+        a list of possible removals.
     */
 
     // Initializations
     vector<Board> l;
+
+    // Change board to false white
+    if (b.whiteTurn == false)
+        b.swapColors();
 
     // Loop over each position on the board
     for (int i = 0; i < 23; i++) {
@@ -586,16 +672,25 @@ vector<Board> Board::generateAdd(Board& b) {
             // Set the empty location to white
             b_copy.updateBoard(i, 1);
             // Check for a mill
-            if (closeMill(i, b_copy))
+            if (closeMill(i, b_copy)) {
                 // Add all possible removals to the list
                 generateRemove(b_copy, l);
-            else {
+            } else {
+                // Correct board colors if we are at false-white
+                if (b_copy.whiteTurn == false) {
+                    b_copy.swapColors();
+                }
+                // Update turn
+                b_copy.whiteTurn = !b_copy.whiteTurn;
                 // Save board to the list
-                b_copy.whiteTurn == 1 ? 0 : 1;
                 l.push_back(b_copy);
             }
         }
     }
+
+    // Revert the board so white is white
+    if (b.whiteTurn == false)
+        b.swapColors();
 
     return l;
 }
@@ -609,6 +704,10 @@ vector<Board> Board::generateMove(Board& b) {
     // Initialize variables
     vector<Board> l;
     vector<unsigned short int> n;
+
+    // Change board to false white
+    if (b.whiteTurn == false)
+        b.swapColors();
 
     // Loop over all moves on the board
     for(int i = 0; i < 23; i++) {
@@ -629,7 +728,15 @@ vector<Board> Board::generateMove(Board& b) {
                     if (closeMill(n[j], b_copy))
                         generateRemove(b_copy, l);
                     else {  // If there are no pieces to remove push the board as is
-                        b_copy.whiteTurn == 1 ? 0 : 1;
+                        
+                        // Swap colors only if false-white
+                        if (b_copy.whiteTurn == false)
+                            b_copy.swapColors();
+                        
+                        // Update turn
+                        b_copy.whiteTurn = !b_copy.whiteTurn;
+                        
+                        // Push board to list
                         l.push_back(b_copy);
                     }
                 }
@@ -637,14 +744,15 @@ vector<Board> Board::generateMove(Board& b) {
         }
     }
 
+    // Revert the board so white is white
+    if (b.whiteTurn == false)
+        b.swapColors();
+
     return l;
 }
 
 vector<Board> Board::generateNextLevel(Board& b) {
     // Checks game phase and turn to fill a board's vector
-    
-    if (b.whiteTurn == 0)
-        b.swapColors();
     
     if (b.gamePhase == 0)
         return generateAdd(b);
@@ -656,7 +764,7 @@ vector<Board> Board::generateNextLevel(Board& b) {
 
 int Board::staticEstimate() {
     // Calculates a heuristic after checking game phase
-    
+
     if (gamePhase == 0){
         // Heuristic for opening
         heuristic = whiteCount - blackCount;
@@ -675,26 +783,125 @@ int Board::staticEstimate() {
             return heuristic;
 
         } else {
-
             if (L.size() == 0){
                 L = generateNextLevel(*this);
-                // Black can't move so white wins
-                heuristic = 10000;
+                // The person who has no move will lose.
+                // TODO: Verify performance on black's turn
+                heuristic = whiteTurn ? 10000 : -10000;
                 return heuristic;
 
             } else {
                 // Final heuristic for in-progress game
+                // TODO: verify performance of L.size();
+                // Does this work without generating 
                 heuristic = 1000 * (whiteCount - blackCount) - L.size();
                 return heuristic;
             }
         }
     }
+    
+    // Not possible, but silences compiler warning
     return heuristic;
 }
 
 
-/*
-int Board::minMax(Board& b) {
+int Board::minMax(Board& b, int cur_level, int max_level, int& l_count) {
+    /*
+        Calculate heuristic value for a certain level
 
+        Params:
+            b: Board to be evaluated
+            cur_level: Current level of the board
+            max_level: Maximum level of the board
+            l_count: Number of leaf nodes
+        
+        Returns:
+            int: Heuristic value of the board
+    */
+
+    // Incriment current level
+    cur_level++;
+    cout << "minMax executed at cur_level:\t" << cur_level << endl;
+
+    // Ensure move list is generated
+    if (b.L.size() == 0)
+        b.L = b.generateNextLevel(b);
+        
+    // Check if b is a leaf node
+    if (b.heuristic == 10000 || b.heuristic == -10000 || cur_level == max_level) {
+        l_count++;
+        return b.staticEstimate();
+    }
+
+    else { // Not a leaf node
+        // Set v to max value
+        int value = 10000;
+        for (int i = 0; i < b.L.size(); i++) {
+            value = min(value, b.maxMin(b.L[i], cur_level, max_level, l_count));
+        }
+        return value;
+    }
 }
-*/
+
+int Board::maxMin(Board& b, int cur_level, int max_level, int& l_count) {
+    // Calculate heuristic value for a certain level
+
+    // Incriment current level
+    cur_level++;
+    cout << "maxMin executed at cur_level:\t" << cur_level << endl;
+
+    // Ensure move list is generated
+    if (b.L.size() == 0)
+        b.L = b.generateNextLevel(b);
+
+    // Check if b is a leaf node
+    if (b.heuristic == 10000 || b.heuristic == -10000 || cur_level == max_level){
+        l_count++;
+        return b.staticEstimate();
+    }
+
+    else { // Not a leaf node
+        // Set v to min value
+        int value = -10000;
+        for (int i = 0; i < b.L.size(); i++) {
+            value = max(value, b.minMax(b.L[i], cur_level, max_level, l_count));
+        }
+        return value;
+    }
+}
+
+Board Board::miniMaxSearch(Board& b, int max_level, int& leaves) {
+    // Return best board configuration based on the current board and max
+    // search level
+
+    // Setup variables
+    int cur_level = 0;
+    b.L = generateNextLevel(b);
+    Board temp_board(b.L[0]);
+
+    // Assign heuristic values based on who's turn it is and return it
+    if (whiteTurn == 1){
+        for (int i = 0; i < b.L.size(); i++) {
+            b.L[i].heuristic = b.maxMin(b.L[i], cur_level, max_level, leaves);
+        }
+        
+        // Find maximum value for next move
+        for (int j = 0; j < b.L.size(); j++) {
+            if (temp_board.heuristic < b.L[j].heuristic)
+                temp_board = b.L[j];
+        }
+        return temp_board;
+
+    } else {
+        for (int i = 0; i < b.L.size(); i++) {
+            b.L[i].heuristic = b.minMax(b.L[i], cur_level, max_level, leaves);
+        }
+        
+        // Find minimum value for next move
+        for (int j = 0; j < b.L.size(); j++) {
+            if (temp_board.heuristic > b.L[j].heuristic)
+                temp_board = b.L[j];
+        }
+        return temp_board;
+    }
+}

@@ -52,46 +52,6 @@ bool testBoardCopyConstructor(){
     return true;
 }
 
-/*
-bool testGameConstructor() {
-    // Tests if the default constructor for Game functions
-    Game g;
-    Board b = g.getBoard();
-    try {
-        assert(b.white == 0);
-        assert(b.black == 0);
-        assert(b.whiteCount == 0);
-        assert(b.blackCount == 0);
-    } catch (const exception e) {
-        cout << "Exception raised in testGameConstructor:\t" << e.what() << endl;
-        return false;
-    }
-    return true;
-}
-
-bool testGameConstructorBoard() {
-    // Tests if the default constructor for Game functions
-    Board b;
-    b.updateBoard(b.a0, 1);
-    b.updateBoard(b.d0, 1);
-    b.updateBoard(b.g0, 1);
-
-    b.updateBoard(b.a6, -1);
-    b.updateBoard(b.d6, -1);
-    b.updateBoard(b.g6, -1);
-    
-    Game g(b);
-    try {
-        assert(g.getBoard().white == 7);
-        assert(g.getBoard().black == 7340032);
-    } catch (const exception e) {
-        cout << "Exception raised in testGameConstructorBoard:\t" << e.what() << endl;
-        return false;
-    }
-    
-    return true;
-}
-*/
 
 bool testCloseMill() {
     // Test function for Game::closeMill()
@@ -654,29 +614,86 @@ bool testGenerateHopping() {
 
 bool testGenerateAdd() {
     /* Validate performance of generate add */
-    // Initialize variables
-    // Game g;
     Board b;
     vector<Board> l;
 
     // Start tests
     try {
-        /*
-            Test setup has two white pieces in row 0 and one black piece.
-            The first move generated will run the generateRemove function
-            The rest will be simple adds. This should cover all branches
-            of the generateAdd() function.
-
-            generateRemove() will only add one element to the list so we
-            The rest of the code will generate moves for the other 20
-            open spaces for a total of 21 boards in the list.
-        */
+        // Test 1: White's turn, no mil
         l.clear();
-        b.white = pow(2, b.a0) + pow(2, b.d0);
-        b.black = pow(2, b.a3);
+        b.white = 0;
+        b.black = 0;
+        b.whiteTurn = true;
         l = b.generateAdd(b);
+        assert(l.size() == 23);
+        for (int i = 0; i < 23; i++){
+            assert(l[i].white == pow(2, i));
+            assert(l[i].black == 0);
+            assert(l[i].whiteTurn == false);
+        }
+
+        // Test 2: White's turn, with option for mill
+        l.clear();
+        b.white = pow(2, b.a0) + pow(2, b.d0); // Move to g0 will provide mill for white
+        b.black = pow(2, b.b1);
+        b.whiteTurn = true;
+        l = b.generateAdd(b);
+        
+        // Should generate 20 adds, one of which will be a mil.
+        // The mil will remove one piece, but will not generate multiple options.
         assert(l.size() == 20);
-    } catch (const exception e) {
+        // Check the first entry (the mill)
+        assert(l[0].white == pow(2, b.g0) + pow(2, b.d0) + pow(2, b.a0));
+        assert(l[0].black == 0);
+        assert(l[0].whiteTurn == false);
+        
+        // Check remaining entries
+        for (int i = 1; i < 20; i++) {
+            assert(l[i].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, i + 3));
+            assert(l[i].black == pow(2, b.b1));
+            assert(l[i].whiteTurn == false);
+        }
+        
+        // Test 3: black turn no mill
+        l.clear();
+        b.white = pow(2, 0);
+        b.black = 0;
+        b.whiteTurn = false;
+        l = b.generateAdd(b);
+        assert(l.size() == 22);
+        for (int i = 0; i < 22; i++){
+            assert(l[i].white == 1);
+            assert(l[i].black == pow(2, i + 1));
+            assert(l[i].whiteTurn == true);
+        }
+
+        // Test 4: Black turn with mil
+        l.clear();
+        b.white = pow(2, b.g6) + pow(2, b.d6) + pow(2, b.a6);
+        b.black = pow(2, b.a0) + pow(2, b.d0); // Black's move to g0 will form a mill
+        b.whiteTurn = false;
+        l = b.generateAdd(b);
+        
+        // Should generate 18 additions since 5 / 23 are filled
+        // 1 of the moves will be a mill and generate three removals
+        // This should total 20 moves if I'm thinking correctly
+        // The mil will remove one piece, but will not generate multiple options.
+        assert(l.size() == 20);
+        
+        // Check removals (from single mill)
+        for (int i = 0; i < 3; i++) {
+            assert(l[i].white == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.a6) - pow(2, 22 - (2 - i)));
+            assert(l[i].black == pow(2, b.g0) + pow(2, b.d0) + pow(2, b.a0));
+            assert(l[i].whiteTurn == true);
+        }
+        // Check non-mill entries
+        for (int i = 3; i < 20; i++) {
+            assert(l[i].white == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+            assert(l[i].black == pow(2, b.a0) + pow(2, b.d0) + pow(2, i));
+            assert(l[i].whiteTurn == true);
+        }
+
+    } catch (const exception& e) {
         cout << "Exception raised in testGenerateAdd:\t" << e.what() << endl;
         return false;
     }
@@ -823,6 +840,10 @@ bool testWriteBoard() {
         // Write board
         b1.writeBoard("test_write123456789.txt");
 
+        // Test board can write with "test" as argument without writing
+        for (int i = 0; i < 20; i++)
+            assert(b1.writeBoard("test") == 1);
+
         // Initialize in stream and start reading board
         ifstream i;
         i.open("test_write123456789.txt");
@@ -868,19 +889,23 @@ bool testReadBoard() {
     bool success = true;
     ofstream o;
     o.open("test_read123456789.txt");
+    ofstream o2;
+    o2.open("test_read123456789_2.txt");
+    o2 << "101-10-100000000000000000\n1\n0";
 
     // Populate board with pattern of WB-
     for (int i = 0; i < 23; i++) {
         if (i % 3 == 0)
             o << '1';
         else if (i % 3 == 1)
-            o << '-' << '1';
+            o << "-1";
         else
             o << '0';
     }
     o << "\n0\n1" << endl;
     // Close file to allow resources
     o.close();
+    o2.close();
 
     // Start assertions
     try {
@@ -896,13 +921,23 @@ bool testReadBoard() {
         }
         assert(b.whiteTurn == 0);
         assert(b.gamePhase == 1);
+        Board b2("test_read123456789_2.txt");
+        assert(b2[0] == 1);
+        assert(b2[1] == 0);
+        assert(b2[2] == 1);
+        assert(b2[3] == -1);
+        assert(b2[4] == 0);
+        assert(b2[5] == -1);
+        for (int i = 6; i < 23; i++)
+            assert(b2[i] == 0);
+
     } catch (const exception e) { // Fail block
         cout << "Exception raised in testReadBoard:\t" << e.what() << endl;
         success = false;
     }
     
     // Clean file
-    try {remove("test_read123456789.txt");}
+    try {remove("test_read123456789.txt");remove("test_read123456789_2.txt");}
     catch (const exception e) {
         success = false;
     }
@@ -910,6 +945,131 @@ bool testReadBoard() {
     return success;
 
 }
+
+
+
+
+
+// bool testStaticEstimate() {
+//     // Validate performance of Board::staticEstimate() function
+    
+//     // // Setup invalid case
+//     // Board invalid;
+//     // invalid.whiteTurn = false;
+//     // try {
+//     //     invalid.staticEstimate();
+//     //     assert(false); // Should not reach this point
+//     // } catch (const exception& e) {
+//     //     // Expected exception for invalid game phase
+//     //     assert(string(e.what()) == "Board started with black and this should not happen!");
+//     // }
+    
+//     try {
+//         // Test Case 1: Opening phase (gamePhase == 0)
+//         Board b1;
+//         b1.whiteCount = 4;
+//         b1.blackCount = 2;
+//         b1.gamePhase = 0; // Opening phase
+//         assert(b1.staticEstimate() == 2); // Expected heuristic: 4 - 2 = 2
+
+//         Board b1_1;
+//         b1_1.whiteCount = 2;
+//         b1_1.blackCount = 4;
+//         b1_1.gamePhase = 0; // Opening phase
+//         assert(b1_1.staticEstimate() == -2); // Expected heuristic: 2 - 4 = -2
+
+//         // Test Case 2: Midgame phase (gamePhase == 1) with black victory condition
+//         Board b2;
+//         b2.whiteCount = 2; // White has 2 pieces
+//         b2.blackCount = 4; // Black has 4 pieces
+//         b2.gamePhase = 1; // Midgame phase
+//         assert(b2.staticEstimate() == -10000); // Expected heuristic: black wins
+
+//         // Test Case 3: Midgame phase (gamePhase == 1) with white victory condition
+//         Board b3;
+//         b3.whiteCount = 4; // White has 4 pieces
+//         b3.blackCount = 2; // Black has 2 pieces
+//         b3.gamePhase = 1; // Midgame phase
+//         assert(b3.staticEstimate() == 10000); // Expected heuristic: white wins
+
+//         // Test Case 4: Midgame phase (gamePhase == 1) with no moves for black
+//         Board b4;
+//         b4.whiteCount = 4;
+//         b4.blackCount = 4;
+//         b4.gamePhase = 1; // Midgame phase
+//         b4.L.clear(); // No moves available
+//         assert(b4.staticEstimate() == 10000); // Expected heuristic: black can't move, white wins
+
+//         // Test Case 5: Midgame phase (gamePhase > 0) with no moves for white
+//         Board b5;
+//         b5.whiteCount = 4;
+//         b5.blackCount = 4;
+//         b5.gamePhase = 1; // Midgame phase
+//         b5.L.clear(); // No moves available
+//         b5.whiteTurn = 0; // Black's turn
+//         assert(b5.staticEstimate() == -10000); // Expected heuristic: white can't move, black wins
+
+//         // Test Case 6: Midgame phase (gamePhase > 0) with in-progress game
+//         Board b6;
+//         b6.whiteCount = 5;
+//         b6.blackCount = 4;
+//         b6.gamePhase = 1; // Midgame phase
+//         b6.L = b6.generateNextLevel(b6); // Generate moves
+//         int expectedHeuristic = 1000 * (5 - 4) - b6.L.size(); // Heuristic formula
+//         assert(b6.staticEstimate() == expectedHeuristic);
+
+//         cout << "All test cases for staticEstimate passed!" << endl;
+//         return true;
+//     } catch (...) {
+//         cout << "A test case for staticEstimate failed!" << endl;
+//         return false;
+//     }
+// }
+
+// bool testMinMax() {
+    // Under construction
+
+//     // Test case for minMax function
+//     try {
+//         // Test 1: White's turn, even depth
+//         Board b1;
+//         b1.white = (1 << 0) + (1 << 1); // White pieces at positions 0 and 1
+//         b1.black = (1 << 2) + (1 << 3);           // Black piece at position 2
+//         b1.whiteCount = 2;
+//         b1.blackCount = 2;
+//         b1.whiteTurn = 1; // White's turn
+//         b1.gamePhase = 1; // Midgame phase
+
+//         int leaf_count = 0;
+//         int heuristic = b1.minMax(b1, 0, 1, leaf_count);
+//         cout << "heuristic: " << heuristic << endl;
+
+//         // Expected heuristic: white has more pieces, so heuristic = 1000 * (2 - 1) = 1000
+//         assert(heuristic == 0);
+//         assert(leaf_count > 1); // Ensure leaf nodes were evaluated
+
+//         // Test 2: Black's turn, odd depth
+//         // Board b2;
+//         // b2.white = (1 << 0);           // White piece at position 0
+//         // b2.black = (1 << 1) + (1 << 2); // Black pieces at positions 1 and 2
+//         // b2.whiteCount = 1;
+//         // b2.blackCount = 2;
+//         // b2.whiteTurn = 0; // Black's turn
+//         // b2.gamePhase = 1; // Midgame phase
+
+//         // leaf_count = 0;
+//         // heuristic = b2.minMax(b2, 0, 3, leaf_count);
+
+//         // // Expected heuristic: black has more pieces, so heuristic = 1000 * (1 - 2) = -1000
+//         // assert(heuristic == -1000);
+//         // assert(leaf_count > 0); // Ensure leaf nodes were evaluated
+
+//         return true;
+//     } catch (...) {
+//         cout << "testMinMax failed" << endl;
+//         return false;
+//     }
+// }
 
 
 int main() {
@@ -925,14 +1085,6 @@ int main() {
         all_pass = false;
         cout << "testBoardCopyConstructor failed" << endl;
     }
-    // if (!testGameConstructor()) {
-    //     all_pass = false;
-    //     cout << "testGameConstructor failed" << endl;
-    // }
-    // if (!testGameConstructorBoard()) {
-    //     all_pass = false;
-    //     cout << "testGameConstructorBoard failed" << endl;
-    // }
 
     if (!testCloseMill()) {
         all_pass = false;
@@ -983,6 +1135,16 @@ int main() {
         all_pass = false;
         cout << "testReadBoard failed" << endl;
     }
+
+    // if (!testStaticEstimate()) {
+    //     all_pass = false;
+    //     cout << "testMinMax failed" << endl;
+    // }
+
+    // if (!testMinMax()) {
+    //     all_pass = false;
+    //     cout << "testMinMax failed" << endl;
+    // }
 
     if (all_pass)
         cout << "All tests have passed!" << endl;
