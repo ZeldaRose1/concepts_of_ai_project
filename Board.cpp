@@ -550,9 +550,20 @@ void Board::generateRemove(Board& b, vector<Board>& l) {
     // if (b.whiteTurn == false)
     //     b.swapColors();
 
+    /*
+        We have a rule where we need to remove non-mil pieces first.
+        Originally I was enforcing this by checking if l was empty,
+        but if this is not the first run, then that will have unwanted
+        effects.
+    */
+   bool noNonMils = true;
+
+
     for (int i = 0; i < 23; i++) {
         if (b[i] == -1) {
             if (!closeMill(i, b)) {
+                // Update boolean to prevent from skipping mil'd pieces
+                noNonMils = false;
                 // Copy board
                 Board b2(b);
                 
@@ -572,7 +583,7 @@ void Board::generateRemove(Board& b, vector<Board>& l) {
         }
     }
     // If we have any values in the list, we are done.
-    if (l.size() > 0)
+    if (!noNonMils)
     {
         // // Revert from false-white
         // if (b.whiteTurn == false)

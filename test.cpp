@@ -609,17 +609,17 @@ bool testGenerateHopping() {
         b.printBoard();
         cout << "\n\n" << endl;
 
-        // for (int i = 0; i < l.size(); i++) {
-        //     cout << "Board " << i << ": \t\t";
-        //     l[i].printBoard();
-        //     cout << endl;
-        // }
+        for (int i = 0; i < l.size(); i++) {
+            cout << "Board " << i << ": \t\t";
+            l[i].printBoard();
+            cout << endl;
+        }
 
         // Should have (23 - 6) = 17 open spaces
         // Three pieces to move gives (23 - 6) * 3 = 51 steps
         // Only one move on white will form a mill, but this will add a board
         // for each of 3 removed pieces for a total of 53 boards
-        // assert(l.size() == 53);
+        assert(l.size() == 53);
 
 
         /*
