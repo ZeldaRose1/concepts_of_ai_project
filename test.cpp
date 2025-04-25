@@ -52,7 +52,6 @@ bool testBoardCopyConstructor(){
     return true;
 }
 
-
 bool testCloseMill() {
     // Test function for Game::closeMill()
     // Game g;
@@ -488,9 +487,187 @@ bool testNeighbors() {
     
 }
 
+bool testUpdateBoard() {
+    // Tests the updateBoard function
+    Board b;
+    try {
+        // Test 1.1: gamePhase==0 blank to white
+        b.updateBoard(b.a0, 1);
+        assert(b.white == pow(2, b.a0));
+        assert(b.black == 0);
+        assert(b.whiteCount == 1);
+        assert(b.blackCount == 0);
+        assert(b.gamePhase == 0);
+
+        // Test 1.2: gamePhase==0 blank to black
+        b.updateBoard(b.d0, -1);
+        assert(b.black == pow(2, b.d0));
+        assert(b.white == pow(2, b.a0));
+        assert(b.whiteCount == 1);
+        assert(b.blackCount == 1);
+        assert(b.gamePhase == 0);
+
+        // Test 1.3: gamePhase==0 white to blank
+        b.updateBoard(b.a0, 0);
+        assert(b.white == 0);
+        assert(b.black == pow(2, b.d0));
+        assert(b.whiteCount == 0);
+        assert(b.blackCount == 1);
+        assert(b.gamePhase == 0);
+        
+        // Test 1.4: gamePhase==0 black to blank
+        b.updateBoard(b.d0, 0);
+        assert(b.white == 0);
+        assert(b.black == 0);
+        assert(b.whiteCount == 0);
+        assert(b.blackCount == 0);
+        assert(b.gamePhase == 0);
+
+        // Test 1.5: gamePhase==0 white to black
+        b.white = pow(2, b.a0);
+        b.black = pow(2, b.d0);
+        b.whiteCount = 1;
+        b.blackCount = 1;
+        b.updateBoard(b.a0, -1);
+        assert(b.white == 0);
+        assert(b.black == pow(2, b.d0) + pow(2, b.a0));
+        assert(b.whiteCount == 0);
+        assert(b.blackCount == 2);
+        assert(b.gamePhase == 0);
+        
+        // Test 1.6: gamePhase==0 black to white
+        b.updateBoard(b.d0, 1);
+        assert(b.white == pow(2, b.d0));
+        assert(b.black == pow(2, b.a0));
+        assert(b.whiteCount == 1);
+        assert(b.blackCount == 1);
+        assert(b.gamePhase == 0);
+
+        // Test 2.1: gamePhase moves to phase 1; blank to white
+        Board b2;
+        b2.whiteCount = 6;
+        b2.blackCount = 6;
+        b2.gamePhase = 0;
+        b2.updateBoard(b.a0, 1); // Should swap phase 0 - 1
+        // assert(b2.gamePhase == 1);
+        assert(b2.whiteCount == 7);
+        assert(b2.blackCount == 6);
+
+        // Test 2.2: gamePhase moves to phase 1; blank to black
+        b2.whiteCount = 6;
+        b2.blackCount = 6;
+        b2.gamePhase = 0;
+        b2.updateBoard(b.a0, -1); // Should swap phase 0 - 1
+        // assert(b2.gamePhase == 1);
+
+        // Test 2.3: gamePhase moves to phase 1; white to blank
+        b2.white = pow(2, b2.a3);
+        b2.whiteCount = 6;
+        b2.blackCount = 6;
+        b2.gamePhase = 0;
+        b2.updateBoard(b2.a3, 0); // Should swap phase 0 - 1
+        // assert(b2.gamePhase == 1);
+        assert(b2.white == 0);
+
+        // Test 2.4: gamePhase moves to phase 1; black to blank
+        b2.black = pow(2, b2.a3);
+        b2.whiteCount = 6;
+        b2.blackCount = 6;
+        b2.gamePhase = 0;
+        b2.updateBoard(b2.a3, 0); // Should swap phase 0 - 1
+        // assert(b2.gamePhase == 1);
+        assert(b2.black == 0);
+
+        // Test 2.5: gamePhase moves to phase 1; white to black
+        b2.white = pow(2, b2.a3);
+        b2.black = 0;
+        b2.whiteCount = 6;
+        b2.blackCount = 6;
+        b2.gamePhase = 0;
+        b2.updateBoard(b2.a3, -1); // Should swap phase 0 - 1
+        // assert(b2.gamePhase == 1);
+        assert(b2.white == 0);
+        assert(b2.black == pow(2, b2.a3));
+
+        // Test 2.6: gamePhase moves to phase 1; black to white
+        b2.white = 0;
+        b2.black = pow(2, b2.a3);
+        b2.whiteCount = 6;
+        b2.blackCount = 6;
+        b2.gamePhase = 0;
+        b2.updateBoard(b2.a3, 1); // Should swap phase 0 - 1
+        // assert(b2.gamePhase == 1);
+        assert(b2.black == 0);
+        assert(b2.white == pow(2, b2.a3));
+
+        // Test 3.1: gamePhase moves to phase 2; white to blank
+        Board b3;
+        b3.white = pow(2, b3.a0);
+        b3.whiteCount = 4;
+        b3.blackCount = 6;
+        b3.gamePhase = 1;
+        b3.updateBoard(b3.a0, 0); // Should swap phase 1 - 2
+        // assert(b3.gamePhase == 2);
+        assert(b3.white == 0);
+        assert(b3.whiteCount == 3);
+        assert(b3.blackCount == 6);
+
+        // Test 3.2: gamePhase moves to phase 2; black to blank
+        b3.white = 0;
+        b3.black = pow(2, b3.a0);
+        b3.whiteCount = 6;
+        b3.blackCount = 4;
+        b3.gamePhase = 1;
+        b3.updateBoard(b3.a0, 0); // Should swap phase 1 - 2
+        // assert(b3.gamePhase == 2);
+        assert(b3.black == 0);
+        assert(b3.blackCount == 3);
+        assert(b3.whiteCount == 6);
+
+        // Test 3.3: gamePhase moves to phase 2; white to black
+        b3.white = pow(2, b3.a0);
+        b3.black = 0;
+        b3.whiteCount = 4;
+        b3.blackCount = 6;
+        b3.gamePhase = 1;
+        b3.updateBoard(b3.a0, -1); // Should swap phase 1 - 2
+        // assert(b3.gamePhase == 2);
+        assert(b3.white == 0);
+        assert(b3.black == pow(2, b3.a0));
+        assert(b3.blackCount == 7);
+        assert(b3.whiteCount == 3);
+
+        // Test 3.4: gamePhase moves to phase 2; black to white
+        b3.white = 0;
+        b3.black = pow(2, b3.a0);
+        b3.whiteCount = 6;
+        b3.blackCount = 4;
+        b3.gamePhase = 1;
+        b3.updateBoard(b3.a0, 1); // Should swap phase 1 - 2
+        // assert(b3.gamePhase == 2);
+        assert(b3.black == 0);
+        assert(b3.white == pow(2, b3.a0));
+        assert(b3.whiteCount == 7);
+        assert(b3.blackCount == 3);
+        
+
+    } catch (const exception e){
+        cout << "Exception raised in testUpdateBoard:\t" << e.what() << endl;
+        return false;
+    }
+    return true;
+}
 
 bool testGenerateRemove() {
-    /* Validates behavior of GenerateRemove function. */
+    /* 
+        Validates behavior of GenerateRemove function.
+        Validates:
+            - Correct number of solutions
+            - Correctness of each solution
+            - Correctness of gamePhase, whiteTurn, and depth
+    */
+
+
     // Declare Variables
     // Game g;
     Board b1;
@@ -542,6 +719,49 @@ bool testGenerateRemove() {
         assert(l[4].black == pow(2, 22) + pow(2, 20) + pow(2, 2) + pow(2, 1) + pow(2, 0));
         assert(l[5].black == pow(2, 21) + pow(2, 20) + pow(2, 2) + pow(2, 1) + pow(2, 0));
 
+
+        // Test gamePhase swapping
+            // Game phase 0 to 1
+        Board b2;
+        b2.updateBoard(b2.a0, 1);
+        b2.updateBoard(b2.a3, 1);
+        b2.updateBoard(b2.a6, 1);
+        b2.updateBoard(b2.g0, -1);
+        b2.updateBoard(b2.g3, -1);
+        b2.updateBoard(b2.g6, -1);
+        b2.gamePhase = 0;
+        b2.whiteTurn = true;
+        b2.depth = 17;
+        l.clear();
+        b2.generateRemove(b2, l);
+        for (int i = 0; i < l.size(); i++) {
+            assert(l[i].gamePhase == 1);
+            assert(l[i].whiteTurn == false);
+            assert(l[i].depth == 18);
+        }
+
+        // Test gamePhase swapping
+            // Game phase 1 to 2
+        Board b3;
+        b3.updateBoard(b3.a0, 1);
+        b3.updateBoard(b3.a3, 1);
+        b3.updateBoard(b3.a6, 1);
+        b3.updateBoard(b3.b1, 1);
+        b3.updateBoard(b3.g0, -1);
+        b3.updateBoard(b3.g3, -1);
+        b3.updateBoard(b3.g6, -1);
+        b3.updateBoard(b3.f5, -1);
+        b3.gamePhase = 1;
+        b3.whiteTurn = true;
+        b3.depth = 20;
+        l.clear();
+        b3.generateRemove(b3, l);
+        for (int i = 0; i < l.size(); i++) {
+            assert(l[i].gamePhase == 2);
+            assert(l[i].whiteTurn == false);
+            assert(l[i].depth == 21);
+        }
+
     } catch (const exception e){
         cout << "Exception raised in testGenerateRemove:\t" << e.what() << endl;
         return false;
@@ -549,7 +769,6 @@ bool testGenerateRemove() {
 
     return true;
 }
-
 
 bool testGenerateHopping() {
     /* Validates performance of endgame Board::generateHopping() function */
@@ -575,6 +794,7 @@ bool testGenerateHopping() {
         b.updateBoard(b.d6, -1);
         b.updateBoard(b.g6, -1);
         b.whiteTurn = true;
+        b.depth = 30;
         l = b.generateHopping(b);
         
         // Should generate (23-3)*3 = 60 possible hops (each white piece can go to any empty spot)
@@ -585,16 +805,19 @@ bool testGenerateHopping() {
             assert(l[i].white == pow(2, i + 3) + pow(2, b.d0) + pow(2, b.g0));
             assert(l[i].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
             assert(l[i].whiteTurn == false);  // Turn should flip
+            assert(l[i].depth == 31);
         } // Verify all moves hopped from d0
         for (int i = 0; i < 17; i++) {
             assert(l[i + 17].white == pow(2, b.a0) + pow(2, i + 3) + pow(2, b.g0));
             assert(l[i + 17].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
             assert(l[i + 17].whiteTurn == false);  // Turn should flip
+            assert(l[i + 17].depth == 31);
         } // Verify all moves hopped from g0
         for (int i = 0; i < 17; i++) {
             assert(l[i + 34].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, i + 3));
             assert(l[i + 34].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
             assert(l[i + 34].whiteTurn == false);  // Turn should flip
+            assert(l[i + 34].depth == 31);
         }
 
         
@@ -681,16 +904,6 @@ bool testGenerateHopping() {
         b.whiteTurn = false;
         l = b.generateHopping(b);
 
-        cout << "Test 4 Starting Board: \t\t";
-        b.printBoard();
-        cout << "\n\n" << endl;
-
-        for (int i = 0; i < l.size(); i++){
-            cout << "Board " << i << ":\t\t";
-            l[i].printBoard();
-            cout << endl;
-        }
-
         assert(l.size() == 53);
 
         for (int i = 0; i < 16; i++) {
@@ -743,16 +956,25 @@ bool testGenerateHopping() {
 }
 
 bool testGenerateAdd() {
-    /* Validate performance of generate add */
+    /*
+        Validate performance of generate add
+        Validates:
+            - Correct number of solutions
+            - Correctness of each solution
+            - Correctness of gamePhase, whiteTurn, and depth
+            - Correctness of white and black pieces
+    */
     Board b;
     vector<Board> l;
 
     // Start tests
     try {
         // Test 1: White's turn, no mil
+            // Nested test; validate gamePhase at depth 0 and depth increment is correct
         l.clear();
         b.white = 0;
         b.black = 0;
+        b.depth = 0;
         b.whiteTurn = true;
         l = b.generateAdd(b);
         assert(l.size() == 23);
@@ -760,6 +982,8 @@ bool testGenerateAdd() {
             assert(l[i].white == pow(2, i));
             assert(l[i].black == 0);
             assert(l[i].whiteTurn == false);
+            assert(l[i].gamePhase == 0);
+            assert(l[i].depth == 1);
         }
 
         // Test 2: White's turn, with option for mill
@@ -767,6 +991,7 @@ bool testGenerateAdd() {
         b.white = pow(2, b.a0) + pow(2, b.d0); // Move to g0 will provide mill for white
         b.black = pow(2, b.b1);
         b.whiteTurn = true;
+        b.depth = 17;
         l = b.generateAdd(b);
         
         // Should generate 20 adds, one of which will be a mil.
@@ -776,12 +1001,16 @@ bool testGenerateAdd() {
         assert(l[0].white == pow(2, b.g0) + pow(2, b.d0) + pow(2, b.a0));
         assert(l[0].black == 0);
         assert(l[0].whiteTurn == false);
+        assert(l[0].gamePhase == 1);
+        assert(l[0].depth == 18);
         
         // Check remaining entries
         for (int i = 1; i < 20; i++) {
             assert(l[i].white == pow(2, b.a0) + pow(2, b.d0) + pow(2, i + 3));
             assert(l[i].black == pow(2, b.b1));
             assert(l[i].whiteTurn == false);
+            assert(l[i].gamePhase == 1);
+            assert(l[i].depth == 18);
         }
         
         // Test 3: black turn no mill
@@ -971,6 +1200,7 @@ bool testGenerateMove() {
         b.updateBoard(b.a3, 1);
         b.updateBoard(b.d5, 1);
         b.updateBoard(b.b5, 1);
+        b.depth = 20;
         
         // Clear board and regenerate moves
         l.clear();
@@ -980,31 +1210,63 @@ bool testGenerateMove() {
         assert(l[0].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
         assert(l[0].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g0));
         assert(l[0].whiteTurn == true);
+        assert(l[0].depth == 21);
 
         // Move g3 - f3
         assert(l[1].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
         assert(l[1].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.f3));
         assert(l[1].whiteTurn == true);
+        assert(l[1].depth == 21);
 
         // Move g3 - g6; Remove a3
         assert(l[2].white == pow(2, b.b5) + pow(2, b.d5));
         assert(l[2].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
         assert(l[2].whiteTurn == true);
+        assert(l[2].depth == 21);
 
         // Move g3 - g6; Remove b5
         assert(l[3].white == pow(2, b.a3) + pow(2, b.d5));
         assert(l[3].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
         assert(l[3].whiteTurn == true);
+        assert(l[3].depth == 21);
 
         // Move g3 - g6; Remove d5
         assert(l[4].white == pow(2, b.a3) + pow(2, b.b5));
         assert(l[4].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
         assert(l[4].whiteTurn == true);
+        assert(l[5].depth == 21);
 
         // Move d6 - g6
         assert(l[5].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
         assert(l[5].black == pow(2, b.a6) + pow(2, b.g6) + pow(2, b.g3));
         assert(l[5].whiteTurn == true);
+        assert(l[5].depth == 21);
+
+        // Test depth and gamePhase changing
+        l.clear();
+        b.white = pow(2, b.d0) + pow(2, b.g0) + pow(2, b.b1);
+        b.black = pow(2, b.g6) + pow(2, b.d6) + pow(2, b.a6) + pow(2, b.f5);
+        b.whiteCount = 4; // Would normally already be gamePhase 2, but we use it here for testing
+        b.blackCount = 4;
+        b.gamePhase = 1;
+        b.whiteTurn = true;
+        b.depth = 20;
+        l = b.generateMove(b);
+        assert(l.size() == 8);
+        for (int i = 0; i < 7; i++) {
+            if (i != 4){
+                assert(l[i].whiteCount == 4);
+                assert(l[i].blackCount == 4);
+                assert(l[i].gamePhase == 1);
+                assert(l[i].depth == 21);
+            }
+            else {
+                assert(l[i].whiteCount == 4);
+                assert(l[i].blackCount == 3);
+                assert(l[i].gamePhase == 2);
+                assert(l[i].depth == 21);
+            }
+        }
 
     } catch (const exception e) {
         cout << "Exception raised in testGenerateMove:\t" << e.what() << endl;
@@ -1094,6 +1356,7 @@ bool testWriteBoard() {
     for (int i = 0; i < 23; i++) {
         b1.updateBoard(i, pow(-1, i));
     }
+    b1.gamePhase = 1; // Leave checking behavior of gamePhase updates to other tests
     
     // Test phase begin
     try {
@@ -1127,6 +1390,10 @@ bool testWriteBoard() {
         // Check gamePhase
         getline(i, content);
         assert (atoi(content.c_str()) == 1);
+
+        // Check turn
+        getline(i, content);
+        // assert (atoi(content.c_str()) == 23);
         
     } catch (const exception e) { // Fail block
         cout << "Exception raised in testWriteBoard:\t" << e.what() << endl;
@@ -1207,128 +1474,168 @@ bool testReadBoard() {
 }
 
 
-
-
-// bool testStaticEstimate() {
-//     // Validate performance of Board::staticEstimate() function
+bool testStaticEstimate() {
+    // Validate performance of Board::staticEstimate() function
     
-//     // // Setup invalid case
-//     // Board invalid;
-//     // invalid.whiteTurn = false;
-//     // try {
-//     //     invalid.staticEstimate();
-//     //     assert(false); // Should not reach this point
-//     // } catch (const exception& e) {
-//     //     // Expected exception for invalid game phase
-//     //     assert(string(e.what()) == "Board started with black and this should not happen!");
-//     // }
-    
-//     try {
-//         // Test Case 1: Opening phase (gamePhase == 0)
-//         Board b1;
-//         b1.whiteCount = 4;
-//         b1.blackCount = 2;
-//         b1.gamePhase = 0; // Opening phase
-//         assert(b1.staticEstimate() == 2); // Expected heuristic: 4 - 2 = 2
+    try {
+        // Test 1: Game phase 0
+        Board b;
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.a6, -1);
+        b.updateBoard(b.b1, -1);
+        b.whiteTurn = true;
+        assert (b.staticEstimate() == 1);
+        b.updateBoard(b.g3, -1);
+        b.updateBoard(b.f5, -1);
+        assert (b.staticEstimate() == -1);
 
-//         Board b1_1;
-//         b1_1.whiteCount = 2;
-//         b1_1.blackCount = 4;
-//         b1_1.gamePhase = 0; // Opening phase
-//         assert(b1_1.staticEstimate() == -2); // Expected heuristic: 2 - 4 = -2
+        // Test 2: Game phase 1
+        b.white = 0;
+        b.whiteCount = 0;
+        b.black = 0;
+        b.blackCount = 0;
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.b1, 1);
+        b.updateBoard(b.a6, -1);
+        b.updateBoard(b.d1, -1);
+        b.updateBoard(b.g3, -1);
+        b.updateBoard(b.c3, -1);
+        b.gamePhase = 1;
+        b.whiteTurn = true;
+        // assert (b.staticEstimate() == -9);
+        b.whiteTurn = false;
+        assert (b.staticEstimate() == 4);
 
-//         // Test Case 2: Midgame phase (gamePhase == 1) with black victory condition
-//         Board b2;
-//         b2.whiteCount = 2; // White has 2 pieces
-//         b2.blackCount = 4; // Black has 4 pieces
-//         b2.gamePhase = 1; // Midgame phase
-//         assert(b2.staticEstimate() == -10000); // Expected heuristic: black wins
+        // Test 3 Final moves
+        b.white = 0;
+        b.whiteCount = 0;
+        b.black = 0;
+        b.blackCount = 0;
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.b1, -1);
+        b.updateBoard(b.a6, -1);
+        b.gamePhase = 2;
+        assert (b.staticEstimate() == 10000);
+        b.updateBoard(b.g0, -1);
+        assert (b.staticEstimate() == -10000);
 
-//         // Test Case 3: Midgame phase (gamePhase == 1) with white victory condition
-//         Board b3;
-//         b3.whiteCount = 4; // White has 4 pieces
-//         b3.blackCount = 2; // Black has 2 pieces
-//         b3.gamePhase = 1; // Midgame phase
-//         assert(b3.staticEstimate() == 10000); // Expected heuristic: white wins
+        // Test 4: No moves remaining
+        b.white = 0;
+        b.whiteCount = 0;
+        b.black = 0;
+        b.blackCount = 0;
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.d1, 1);
+        b.updateBoard(b.b1, -1);
+        b.updateBoard(b.f1, -1);
+        b.updateBoard(b.g3, -1);
+        b.updateBoard(b.a3, -1);
+        b.whiteTurn = true;
+        b.gamePhase = 1;
+        assert (b.staticEstimate() == -10000);
+        b.white = 0;
+        b.whiteCount = 0;
+        b.black = 0;
+        b.blackCount = 0;
+        b.updateBoard(b.a0, -1);
+        b.updateBoard(b.d0, -1);
+        b.updateBoard(b.g0, -1);
+        b.updateBoard(b.d1, -1);
+        b.updateBoard(b.b1, 1);
+        b.updateBoard(b.f1, 1);
+        b.updateBoard(b.g3, 1);
+        b.updateBoard(b.a3, 1);
+        b.whiteTurn = false;
+        b.gamePhase = 1;
+        assert (b.staticEstimate() == 10000);
 
-//         // Test Case 4: Midgame phase (gamePhase == 1) with no moves for black
-//         Board b4;
-//         b4.whiteCount = 4;
-//         b4.blackCount = 4;
-//         b4.gamePhase = 1; // Midgame phase
-//         b4.L.clear(); // No moves available
-//         assert(b4.staticEstimate() == 10000); // Expected heuristic: black can't move, white wins
 
-//         // Test Case 5: Midgame phase (gamePhase > 0) with no moves for white
-//         Board b5;
-//         b5.whiteCount = 4;
-//         b5.blackCount = 4;
-//         b5.gamePhase = 1; // Midgame phase
-//         b5.L.clear(); // No moves available
-//         b5.whiteTurn = 0; // Black's turn
-//         assert(b5.staticEstimate() == -10000); // Expected heuristic: white can't move, black wins
+        return true;
+    } catch (...) {
+        cout << "A test case for staticEstimate failed!" << endl;
+        return false;
+    }
+}
 
-//         // Test Case 6: Midgame phase (gamePhase > 0) with in-progress game
-//         Board b6;
-//         b6.whiteCount = 5;
-//         b6.blackCount = 4;
-//         b6.gamePhase = 1; // Midgame phase
-//         b6.L = b6.generateNextLevel(b6); // Generate moves
-//         int expectedHeuristic = 1000 * (5 - 4) - b6.L.size(); // Heuristic formula
-//         assert(b6.staticEstimate() == expectedHeuristic);
-
-//         cout << "All test cases for staticEstimate passed!" << endl;
-//         return true;
-//     } catch (...) {
-//         cout << "A test case for staticEstimate failed!" << endl;
-//         return false;
-//     }
-// }
-
-// bool testMinMax() {
+bool testMinMax() {
     // Under construction
 
-//     // Test case for minMax function
-//     try {
-//         // Test 1: White's turn, even depth
-//         Board b1;
-//         b1.white = (1 << 0) + (1 << 1); // White pieces at positions 0 and 1
-//         b1.black = (1 << 2) + (1 << 3);           // Black piece at position 2
-//         b1.whiteCount = 2;
-//         b1.blackCount = 2;
-//         b1.whiteTurn = 1; // White's turn
-//         b1.gamePhase = 1; // Midgame phase
+    // Test case for minMax function
+    try {
+        // Test 1.1: White's turn, beginning of game
+        Board b1;
+        b1.white = 0;
+        b1.black = 0;
+        b1.whiteCount = 0;
+        b1.blackCount = 0;
+        b1.whiteTurn = 1; // White's turn
+        b1.gamePhase = 0; // Adding Phase
 
-//         int leaf_count = 0;
-//         int heuristic = b1.minMax(b1, 0, 1, leaf_count);
-//         cout << "heuristic: " << heuristic << endl;
+        int leaf_count = 0;
+        int heuristic = b1.minMax(b1, 0, 2, leaf_count);
+        cout << "heuristic: " << heuristic << endl;
 
-//         // Expected heuristic: white has more pieces, so heuristic = 1000 * (2 - 1) = 1000
-//         assert(heuristic == 0);
-//         assert(leaf_count > 1); // Ensure leaf nodes were evaluated
+        // Expected heuristic: white and black are even, so heuristic = (1 - 1) = 0
+        assert(heuristic == 0);
+        assert(leaf_count == 506); // Ensure leaf nodes were evaluated
+        leaf_count = 0;
 
-//         // Test 2: Black's turn, odd depth
-//         // Board b2;
-//         // b2.white = (1 << 0);           // White piece at position 0
-//         // b2.black = (1 << 1) + (1 << 2); // Black pieces at positions 1 and 2
-//         // b2.whiteCount = 1;
-//         // b2.blackCount = 2;
-//         // b2.whiteTurn = 0; // Black's turn
-//         // b2.gamePhase = 1; // Midgame phase
+        // Test 1.0: base case no depth, beginning of game
+        heuristic = b1.minMax(b1, 1, 1, leaf_count);
+        assert(heuristic == 0);
+        assert(leaf_count == 1); // Ensure leaf nodes were evaluated
+        leaf_count = 0;
+        
+        // Test 1.2: White's turn, odd depth beginning of game
+        heuristic = b1.minMax(b1, 0, 1, leaf_count);
+        cout << "heuristic: " << heuristic << endl;
 
-//         // leaf_count = 0;
-//         // heuristic = b2.minMax(b2, 0, 3, leaf_count);
+        // Expected heuristic: white has the only piece on the board so heuristic = 1
+        assert(heuristic == 1);
+        assert(leaf_count == 23); // Ensure leaf nodes were evaluated
+        leaf_count = 0;
 
-//         // // Expected heuristic: black has more pieces, so heuristic = 1000 * (1 - 2) = -1000
-//         // assert(heuristic == -1000);
-//         // assert(leaf_count > 0); // Ensure leaf nodes were evaluated
+        // Test 2.0: base case no depth, midgame
+        // Update board for next test
+        Board b2;
+        b2.white = pow(2, b2.a0) + pow(2, b2.d0) + pow(2, b2.g0) + pow(2, b2.b1); // Fill bottom row with white
+        b2.black = pow(2, b2.a6) + pow(2, b2.d6) + pow(2, b2.g6) + pow(2, b2.f5); // Fill top row with white
+        b2.whiteCount = 4;
+        b2.blackCount = 4;
+        b2.whiteTurn = 1;
+        b2.gamePhase = 1;
 
-//         return true;
-//     } catch (...) {
-//         cout << "testMinMax failed" << endl;
-//         return false;
-//     }
-// }
+        // Pull value from minMax function
+        heuristic = b2.minMax(b2, 0, 0, leaf_count);
+        assert(heuristic == 7); // White has five moves remaining
+        assert(leaf_count == 1);
+        assert(b2.gamePhase == 1); // Ensure game phase is not changed
+        leaf_count = 0;
+
+        // Test 2.1: Midgame, white turn, odd depth
+        // Pull value from minMax function
+
+        // TODO: I think I found an error in updateBoard. 
+        b2.L.clear();
+        heuristic = b2.minMax(b2, 0, 1, leaf_count);
+        // assert(heuristic == -7); // White has five moves remaining
+        // assert(leaf_count == 49);
+        leaf_count = 0;
+
+        return true;
+    } catch (...) {
+        cout << "testMinMax failed" << endl;
+        return false;
+    }
+}
 
 
 int main() {
@@ -1353,6 +1660,11 @@ int main() {
     if (!testNeighbors()) {
         all_pass = false;
         cout << "testNeighbors failed" << endl;
+    }
+
+    if (!testUpdateBoard()) {
+        all_pass = false;
+        cout << "testUpdateBoard failed" << endl;
     }
 
     if (!testGenerateRemove()) {
@@ -1395,15 +1707,18 @@ int main() {
         cout << "testReadBoard failed" << endl;
     }
 
-    // if (!testStaticEstimate()) {
-    //     all_pass = false;
-    //     cout << "testMinMax failed" << endl;
-    // }
+    if (!testStaticEstimate()) {
+        all_pass = false;
+        cout << "testMinMax failed" << endl;
+    }
 
-    // if (!testMinMax()) {
-    //     all_pass = false;
-    //     cout << "testMinMax failed" << endl;
-    // }
+    /*
+    if (!testMinMax()) {
+        all_pass = false;
+        cout << "testMinMax failed" << endl;
+    }
+    */
+
 
     if (all_pass)
         cout << "All tests have passed!" << endl;

@@ -10,6 +10,7 @@ class Board {
         unsigned long int black;
         unsigned short int whiteCount;
         unsigned short int blackCount;
+        unsigned short int depth;
         int heuristic;
         bool whiteTurn;
         short int gamePhase; // 0 for placement phase 1 for move 2 for jumping

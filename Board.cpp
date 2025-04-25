@@ -14,6 +14,7 @@ Board::Board(){
     whiteTurn = 1;
     gamePhase = 0;
     heuristic = 0;
+    depth = 0;
 }
 
 Board::Board(const Board& b) {
@@ -25,6 +26,7 @@ Board::Board(const Board& b) {
     whiteTurn = b.whiteTurn;
     gamePhase = b.gamePhase;
     heuristic = b.heuristic;
+    depth = b.depth;
 }
 
 Board::Board(const char* in_path) {
@@ -50,6 +52,7 @@ Board::Board(const char* in_path) {
     whiteTurn = 1;
     gamePhase = 1;
     heuristic = 0;
+    depth = 0;
 
     ifstream in;
     in.open(in_path);
@@ -66,13 +69,17 @@ Board::Board(const char* in_path) {
             updateBoard(i, 1);
     }
     
-    // Read turn line
+    // Read depth line
     getline(in, content);
     whiteTurn = atoi(content.c_str());
 
     // Read game phase
     getline(in, content);
     gamePhase = atoi(content.c_str());
+    
+    // Read depth number
+    getline(in, content);
+    depth = atoi(content.c_str());
 
     // Default heuristic to be calculated later
     heuristic = 0;
@@ -124,61 +131,101 @@ void Board::updateBoard(short int i, short int val) {
     }
 
     // Check for consistency
-    if (w == 1 && b == 1)
+    if (w == 1 && b == 1){
         throw std::domain_error("White and black occupy same space.");
-    else if (val == 1) { // Set space to white
+    
+    } else if (val == 1) { 
+    // Case 1: Set space to white
+        // Case 1.1: Replace black tile with white tile
         if (b == 1) {
             black -= static_cast<unsigned long int>(pow(2, i));
-            blackCount--;
-            // whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
-            // Check for transition to end game phase
-            if (gamePhase == 1 & blackCount <= 3)
-                gamePhase = 2;
-        } if (w == 1)
-            return; // Value already matches
-        else{
             white += static_cast<unsigned long int>(pow(2, i));
-            whiteCount++; // Increment white count
-            // whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
-            // Update game phase
-            if (whiteCount == 9 & blackCount == 9 & gamePhase == 0)
-                gamePhase = 1;
+            blackCount--;
+            whiteCount++;
+            // depth++;
+
+            // // Check for transition to end game phase
+            // if (gamePhase == 1 && blackCount <= 3){
+            //     gamePhase = 2;
+            // } else if (depth >= 18 && gamePhase == 0){
+            //     gamePhase = 1;
+            // }
+
+        } else if (w == 1){
+            // Case 1.2: Error
+            return;
+            // throw std::domain_error("Value already matches"); // Breaks test cases without ensuring valid behavior
+        } else{
+            // Case 1.3: Set blank space to white
+            white += static_cast<unsigned long int>(pow(2, i));
+            whiteCount++;
+            // depth++;
+            // // Update game phase
+            // if (depth >= 18 && gamePhase == 0){
+            //     gamePhase = 1;
+            // }
         }
 
     } else if (val == -1) { // Set space to black
+    // Case 2: Set space to black
+        // Case 2.1: Replace white tile with black tile
         if (w == 1){
             white -= static_cast<unsigned long int>(pow(2, i));
             whiteCount--;
-            // whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
-            // Check for transition to end game phase
-            if (gamePhase == 1 & whiteCount <= 3)
-                gamePhase = 2;
-        } if (b == 1)
-            return; // Value already matches
-        else {
-            black += static_cast<unsigned long int>(pow(2, i)); // Update black
+            black += static_cast<unsigned long int>(pow(2, i));
             blackCount++;
-            // whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
-            // Update game phase
-            if (whiteCount == 9 & blackCount == 9 & gamePhase == 0)
-                gamePhase = 1;
+            // depth++;
+            
+            // // Check for transition to end game phase
+            // if (gamePhase == 1 && whiteCount <= 3){
+            //     gamePhase = 2;
+            // } else if (depth >= 18 && gamePhase == 0){
+            //     gamePhase = 1;
+            // }
+
+        }  else if (b == 1){
+            // Case 2.2: Error
+            return;
+            // throw std::domain_error("Value already matches"); // Breaks test cases without ensuring valid behavior
+        } else {
+            // Case 2.3: Set blank space to black
+            black += static_cast<unsigned long int>(pow(2, i));
+            blackCount++;
+            // depth++;
+
+            // // Update game phase
+            // if (depth >= 18 && gamePhase == 0){
+            //     gamePhase = 1;
+            // } else if (gamePhase == 1 && whiteCount <= 3){
+            //     gamePhase = 2;
+            // }
         }
 
-    } else if (val == 0) { // Set space to empty   
+    // Case 3: Set space to blank
+    } else if (val == 0) {
+        // Case 3.1: Set white tile to blank
         if (w == 1){
             white -= static_cast<unsigned long int>(pow(2, i));
             whiteCount--;
-            // whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
-            // Check for transition to end game phase
-            if (gamePhase == 1 & whiteCount <= 3)
-                gamePhase = 2;
+            // depth++;
+            // // Check for transition to end game phase
+            // if (gamePhase == 1 & whiteCount <= 3){
+            //     gamePhase = 2;
+            // } else if (depth >= 18 && gamePhase == 0){
+            //     gamePhase = 1;
+            // }
         } if (b == 1) {
+            // Case 3.2: Set black tile to blank
             black -= static_cast<unsigned long int>(pow(2, i));
             blackCount--;
-            // whiteTurn = whiteTurn == 1 ? 0 : 1; // Toggle whiteTurn
-            // Check for transition to end game phase
-            if (gamePhase == 1 & blackCount <= 3)
-                gamePhase = 2;
+            // depth++;
+
+            // // Check for transition to end game phase
+            // if (gamePhase == 1 & blackCount <= 3){
+            //     gamePhase = 2;
+            // } else if (depth >= 18 && gamePhase == 0){
+            //     gamePhase = 1;
+            // }
         }
     }
     return;
@@ -314,6 +361,7 @@ void Board::swapColors() {
     return;
 }
 
+
 void Board::setCounts() {
     /* Updates the count of white pieces in a given board */
     // Reset counts
@@ -329,6 +377,7 @@ void Board::setCounts() {
     }
     return;
 }
+
 
 int Board::writeBoard(string out_path){
     // Write board to a text file
@@ -346,8 +395,8 @@ int Board::writeBoard(string out_path){
         for (int i = 0; i < 23; i++) {
             out << operator[](i);
         }
-        // Write new turn and gamePhase
-        out << "\n" << whiteTurn << "\n" << gamePhase << endl;
+        // Write new depth and gamePhase
+        out << "\n" << whiteTurn << "\n" << gamePhase << "\n" << depth << endl;
         return 1;
     } else {
         cout << "Error in Board::writeBoard; Could not open file." << endl;
@@ -355,6 +404,7 @@ int Board::writeBoard(string out_path){
     }
 
 }
+
 
 bool Board::closeMill(short int i, Board& b){
     // Tests position for a mill after tile has been placed
@@ -543,6 +593,7 @@ bool Board::closeMill(short int i, Board& b){
     }
 }
 
+
 void Board::generateRemove(Board& b, vector<Board>& l) {
     // Generate a list of all possible black removals and insert into list l
 
@@ -576,6 +627,14 @@ void Board::generateRemove(Board& b, vector<Board>& l) {
                 
                 // Update turn
                 b2.whiteTurn = !b2.whiteTurn;
+                b2.depth++;
+
+                // Update game phase
+                if (b2.depth >= 18 && b2.gamePhase == 0){
+                    b2.gamePhase = 1;
+                } else if (b2.gamePhase == 1 && (b2.blackCount <= 3 || b2.whiteCount <= 3)){
+                    b2.gamePhase = 2;
+                }
 
                 // Push to list
                 l.push_back(b2);
@@ -606,6 +665,14 @@ void Board::generateRemove(Board& b, vector<Board>& l) {
 
             // Update turn
             b2.whiteTurn = !b2.whiteTurn;
+            b2.depth++;
+
+            // Update game phase
+            if (b2.depth >= 18 && b2.gamePhase == 0){
+                b2.gamePhase = 1;
+            } else if (b2.gamePhase == 1 && (b2.blackCount <= 3 || b2.whiteCount <= 3)){
+                b2.gamePhase = 2;
+            }
 
             // Append to list
             l.push_back(b2);
@@ -616,6 +683,7 @@ void Board::generateRemove(Board& b, vector<Board>& l) {
     //     b.swapColors();
 
 }
+
 
 vector<Board> Board::generateHopping(Board& b) {
     /* Generates a list of Board positions during the endgame */
@@ -653,6 +721,7 @@ vector<Board> Board::generateHopping(Board& b) {
                         }
                         // Update turn
                         b2.whiteTurn = !b2.whiteTurn;
+                        b2.depth++;
                         // Push board to list
                         l.push_back(b2);
                     }
@@ -667,6 +736,7 @@ vector<Board> Board::generateHopping(Board& b) {
 
     return l;
 }
+
 
 vector<Board> Board::generateAdd(Board& b) {
     /*
@@ -708,6 +778,11 @@ vector<Board> Board::generateAdd(Board& b) {
                 }
                 // Update turn
                 b_copy.whiteTurn = !b_copy.whiteTurn;
+                b_copy.depth++;
+                // Update game phase
+                if (b_copy.depth >= 18 && b_copy.gamePhase == 0){
+                    b_copy.gamePhase = 1;
+                }
                 // Save board to the list
                 l.push_back(b_copy);
             }
@@ -720,6 +795,7 @@ vector<Board> Board::generateAdd(Board& b) {
 
     return l;
 }
+
 
 vector<Board> Board::generateMove(Board& b) {
     /*
@@ -762,6 +838,13 @@ vector<Board> Board::generateMove(Board& b) {
 
                         // Update turn
                         b_copy.whiteTurn = !b_copy.whiteTurn;
+
+                        // Update depth
+                        b_copy.depth++;
+                        // Update game phase
+                        if (b_copy.gamePhase == 1 && (b_copy.blackCount <= 3 || b_copy.whiteCount <= 3)){
+                            b_copy.gamePhase = 2;
+                        }
                         
                         // Push board to list
                         l.push_back(b_copy);
@@ -778,20 +861,30 @@ vector<Board> Board::generateMove(Board& b) {
     return l;
 }
 
+
 vector<Board> Board::generateNextLevel(Board& b) {
     // Checks game phase and turn to fill a board's vector
     
     if (b.gamePhase == 0)
         return generateAdd(b);
-    else if (b.gamePhase == 2 & b.whiteCount <= 3)
+    else if (
+        b.gamePhase == 2 && 
+        (b.whiteTurn == true && b.whiteCount <= 3) ||
+        (b.whiteTurn == false && b.blackCount <= 3)
+    ){
         return generateHopping(b);
+     }   
     else
         return generateMove(b);
 }
 
+
 int Board::staticEstimate() {
     // Calculates a heuristic after checking game phase
 
+    // Make sure the next level is generated
+    L.clear();
+    L = generateNextLevel(*this);
     if (gamePhase == 0){
         // Heuristic for opening
         heuristic = whiteCount - blackCount;
@@ -811,17 +904,30 @@ int Board::staticEstimate() {
 
         } else {
             if (L.size() == 0){
-                L = generateNextLevel(*this);
                 // The person who has no move will lose.
                 // TODO: Verify performance on black's turn
-                heuristic = whiteTurn ? 10000 : -10000;
+                heuristic = whiteTurn ? -10000 : 10000;
                 return heuristic;
 
             } else {
                 // Final heuristic for in-progress game
+                
+                // Make count of opponent's available moves
+                Board temp_board(*this);
+
+                // swap colors to calculate from enemy's view
+                temp_board.swapColors();
+                // temp_board.whiteTurn = !temp_board.whiteTurn;
+
+                temp_board.L = temp_board.generateNextLevel(temp_board);
+
                 // TODO: verify performance of L.size();
                 // Does this work without generating 
-                heuristic = 1000 * (whiteCount - blackCount) - L.size();
+                heuristic = whiteTurn ?
+                    1000 * (whiteCount - blackCount) + L.size() :
+                    1000 * (whiteCount - blackCount) - L.size();
+                
+                L.clear();
                 return heuristic;
             }
         }
@@ -847,7 +953,7 @@ int Board::minMax(Board& b, int cur_level, int max_level, int& l_count) {
     */
 
     // Incriment current level
-    cur_level++;
+    // cur_level++;
     cout << "minMax executed at cur_level:\t" << cur_level << endl;
 
     // Ensure move list is generated
@@ -864,7 +970,7 @@ int Board::minMax(Board& b, int cur_level, int max_level, int& l_count) {
         // Set v to max value
         int value = 10000;
         for (int i = 0; i < b.L.size(); i++) {
-            value = min(value, b.maxMin(b.L[i], cur_level, max_level, l_count));
+            value = min(value, b.maxMin(b.L[i], cur_level + 1, max_level, l_count));
         }
         return value;
     }
@@ -874,7 +980,7 @@ int Board::maxMin(Board& b, int cur_level, int max_level, int& l_count) {
     // Calculate heuristic value for a certain level
 
     // Incriment current level
-    cur_level++;
+    // cur_level++;
     cout << "maxMin executed at cur_level:\t" << cur_level << endl;
 
     // Ensure move list is generated
@@ -891,7 +997,7 @@ int Board::maxMin(Board& b, int cur_level, int max_level, int& l_count) {
         // Set v to min value
         int value = -10000;
         for (int i = 0; i < b.L.size(); i++) {
-            value = max(value, b.minMax(b.L[i], cur_level, max_level, l_count));
+            value = max(value, b.minMax(b.L[i], cur_level + 1, max_level, l_count));
         }
         return value;
     }
