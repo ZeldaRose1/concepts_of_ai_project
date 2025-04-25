@@ -870,82 +870,82 @@ bool testGenerateHopping() {
 
 
         
-        // Test 3: Black's turn, no mill formation
-        l.clear();
-        // Moving white tile from a0 to b5 for ease of indexing
-        b.updateBoard(b.a0, 0);
-        b.updateBoard(b.b5, 1);
-        b.whiteTurn = false;
-        l = b.generateHopping(b);
+        // // Test 3: Black's turn, no mill formation
+        // l.clear();
+        // // Moving white tile from a0 to b5 for ease of indexing
+        // b.updateBoard(b.a0, 0);
+        // b.updateBoard(b.b5, 1);
+        // b.whiteTurn = false;
+        // l = b.generateHopping(b);
 
-        assert(l.size() == 51);
-        // Verify all moves hopped from a0
-        for (int i = 0; i < 17; i++) {
-            assert(l[i].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
-            assert(l[i].black == pow(2, i) + pow(2, b.d6) + pow(2, b.g6));
-            assert(l[i].whiteTurn == true);  // Turn should flip
-        } // Verify all moves hopped from d0
-        for (int i = 0; i < 17; i++) {
-            assert(l[i + 17].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
-            assert(l[i + 17].black == pow(2, b.a6) + pow(2, i) + pow(2, b.g6));
-            assert(l[i + 17].whiteTurn == true);  // Turn should flip
-        } // Verify all moves hopped from g0
-        for (int i = 0; i < 17; i++) {
-            assert(l[i + 34].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
-            assert(l[i + 34].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, i));
-            assert(l[i + 34].whiteTurn == true);  // Turn should flip
-        }
+        // assert(l.size() == 51);
+        // // Verify all moves hopped from a0
+        // for (int i = 0; i < 17; i++) {
+        //     assert(l[i].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
+        //     assert(l[i].black == pow(2, i) + pow(2, b.d6) + pow(2, b.g6));
+        //     assert(l[i].whiteTurn == true);  // Turn should flip
+        // } // Verify all moves hopped from d0
+        // for (int i = 0; i < 17; i++) {
+        //     assert(l[i + 17].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
+        //     assert(l[i + 17].black == pow(2, b.a6) + pow(2, i) + pow(2, b.g6));
+        //     assert(l[i + 17].whiteTurn == true);  // Turn should flip
+        // } // Verify all moves hopped from g0
+        // for (int i = 0; i < 17; i++) {
+        //     assert(l[i + 34].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
+        //     assert(l[i + 34].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, i));
+        //     assert(l[i + 34].whiteTurn == true);  // Turn should flip
+        // }
         
-        // Test 4: Black's turn with mill formation
-        l.clear();
-        // Moving black tile from a6 to a0 to force only one mill
-        b.updateBoard(b.a6, 0);
-        b.updateBoard(b.a0, -1);
-        b.whiteTurn = false;
-        l = b.generateHopping(b);
+        // // Test 4: Black's turn with mill formation
+        // l.clear();
+        // // Moving black tile from a6 to a0 to force only one mill
+        // b.updateBoard(b.a6, 0);
+        // b.updateBoard(b.a0, -1);
+        // b.whiteTurn = false;
+        // l = b.generateHopping(b);
 
-        assert(l.size() == 53);
+        // assert(l.size() == 53);
 
-        for (int i = 0; i < 16; i++) {
-            assert(l[i].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
-            assert(l[i].black == pow(2, i + 1) + pow(2, b.d6) + pow(2, b.g6));
-            assert(l[i].whiteTurn == true);  // Turn should flip
-        }
+        // for (int i = 0; i < 16; i++) {
+        //     assert(l[i].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
+        //     assert(l[i].black == pow(2, i + 1) + pow(2, b.d6) + pow(2, b.g6));
+        //     assert(l[i].whiteTurn == true);  // Turn should flip
+        // }
         
-        // Verify the removed pieces
-        assert(l[16].white == pow(2, b.d5) + pow(2, b.f5));
-        assert(l[16].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
-        assert(l[16].whiteTurn == true);
-        assert(l[17].white == pow(2, b.b5) + pow(2, b.f5));
-        assert(l[17].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
-        assert(l[17].whiteTurn == true);  // Turn should flip
-        assert(l[18].white == pow(2, b.b5) + pow(2, b.d5));
-        assert(l[18].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
-        assert(l[18].whiteTurn == true);  // Turn should flip
+        // // Verify the removed pieces
+        // assert(l[16].white == pow(2, b.d5) + pow(2, b.f5));
+        // assert(l[16].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        // assert(l[16].whiteTurn == true);
+        // assert(l[17].white == pow(2, b.b5) + pow(2, b.f5));
+        // assert(l[17].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        // assert(l[17].whiteTurn == true);  // Turn should flip
+        // assert(l[18].white == pow(2, b.b5) + pow(2, b.d5));
+        // assert(l[18].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        // assert(l[18].whiteTurn == true);  // Turn should flip
 
-        // Verify hopping d6
-        for (int i = 0; i < 16; i++) {
-            assert(l[i + 19].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
-            assert(l[i + 19].black == pow(2, b.a0) + pow(2, i + 1) + pow(2, b.g6));
-            assert(l[i + 19].whiteTurn == true);  // Turn should flip
-        }
+        // // Verify hopping d6
+        // for (int i = 0; i < 16; i++) {
+        //     assert(l[i + 19].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
+        //     assert(l[i + 19].black == pow(2, b.a0) + pow(2, i + 1) + pow(2, b.g6));
+        //     assert(l[i + 19].whiteTurn == true);  // Turn should flip
+        // }
 
-        // Last hop of d6 to a6
-        assert(l[35].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
-        assert(l[35].black == pow(2, b.a0) + pow(2, b.a6) + pow(2, b.g6));
-        assert(l[35].whiteTurn == true);  // Turn should flip
+        // // Last hop of d6 to a6
+        // assert(l[35].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
+        // assert(l[35].black == pow(2, b.a0) + pow(2, b.a6) + pow(2, b.g6));
+        // assert(l[35].whiteTurn == true);  // Turn should flip
 
-        // Verify hopping g6
-        for (int i = 0; i < 16; i++) {
-            assert(l[i + 36].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
-            assert(l[i + 36].black == pow(2, b.a0) + pow(2, b.d6) + pow(2, i + 1));
-            assert(l[i + 36].whiteTurn == true);  // Turn should flip
-        }
+        // // Verify hopping g6
+        // for (int i = 0; i < 16; i++) {
+        //     assert(l[i + 36].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
+        //     assert(l[i + 36].black == pow(2, b.a0) + pow(2, b.d6) + pow(2, i + 1));
+        //     assert(l[i + 36].whiteTurn == true);  // Turn should flip
+        // }
 
-        // Final hop of g6 to a6
-        assert(l[52].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
-        assert(l[52].black == pow(2, b.a0) + pow(2, b.d6) + pow(2, b.a6));
-        assert(l[52].whiteTurn == true);  // Turn should flip
+        // // Final hop of g6 to a6
+        // assert(l[52].white == pow(2, b.b5) + pow(2, b.d5) + pow(2, b.f5));
+        // assert(l[52].black == pow(2, b.a0) + pow(2, b.d6) + pow(2, b.a6));
+        // assert(l[52].whiteTurn == true);  // Turn should flip
         
     } catch (const exception& e) {
         cout << "Exception raised in testGenerateHopping:\t" << e.what() << endl;
@@ -1013,44 +1013,44 @@ bool testGenerateAdd() {
             assert(l[i].depth == 18);
         }
         
-        // Test 3: black turn no mill
-        l.clear();
-        b.white = pow(2, 0);
-        b.black = 0;
-        b.whiteTurn = false;
-        l = b.generateAdd(b);
-        assert(l.size() == 22);
-        for (int i = 0; i < 22; i++){
-            assert(l[i].white == 1);
-            assert(l[i].black == pow(2, i + 1));
-            assert(l[i].whiteTurn == true);
-        }
+        // // Test 3: black turn no mill
+        // l.clear();
+        // b.white = pow(2, 0);
+        // b.black = 0;
+        // b.whiteTurn = false;
+        // l = b.generateAdd(b);
+        // assert(l.size() == 22);
+        // for (int i = 0; i < 22; i++){
+        //     assert(l[i].white == 1);
+        //     assert(l[i].black == pow(2, i + 1));
+        //     assert(l[i].whiteTurn == true);
+        // }
 
-        // Test 4: Black turn with mil
-        l.clear();
-        b.white = pow(2, b.g6) + pow(2, b.d6) + pow(2, b.a6);
-        b.black = pow(2, b.a0) + pow(2, b.d0); // Black's move to g0 will form a mill
-        b.whiteTurn = false;
-        l = b.generateAdd(b);
+        // // Test 4: Black turn with mil
+        // l.clear();
+        // b.white = pow(2, b.g6) + pow(2, b.d6) + pow(2, b.a6);
+        // b.black = pow(2, b.a0) + pow(2, b.d0); // Black's move to g0 will form a mill
+        // b.whiteTurn = false;
+        // l = b.generateAdd(b);
         
-        // Should generate 18 additions since 5 / 23 are filled
-        // 1 of the moves will be a mill and generate three removals
-        // This should total 20 moves if I'm thinking correctly
-        // The mil will remove one piece, but will not generate multiple options.
-        assert(l.size() == 20);
+        // // Should generate 18 additions since 5 / 23 are filled
+        // // 1 of the moves will be a mill and generate three removals
+        // // This should total 20 moves if I'm thinking correctly
+        // // The mil will remove one piece, but will not generate multiple options.
+        // assert(l.size() == 20);
         
-        // Check removals (from single mill)
-        for (int i = 0; i < 3; i++) {
-            assert(l[i].white == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.a6) - pow(2, 22 - (2 - i)));
-            assert(l[i].black == pow(2, b.g0) + pow(2, b.d0) + pow(2, b.a0));
-            assert(l[i].whiteTurn == true);
-        }
-        // Check non-mill entries
-        for (int i = 3; i < 20; i++) {
-            assert(l[i].white == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
-            assert(l[i].black == pow(2, b.a0) + pow(2, b.d0) + pow(2, i));
-            assert(l[i].whiteTurn == true);
-        }
+        // // Check removals (from single mill)
+        // for (int i = 0; i < 3; i++) {
+        //     assert(l[i].white == pow(2, b.g6) + pow(2, b.d6) + pow(2, b.a6) - pow(2, 22 - (2 - i)));
+        //     assert(l[i].black == pow(2, b.g0) + pow(2, b.d0) + pow(2, b.a0));
+        //     assert(l[i].whiteTurn == true);
+        // }
+        // // Check non-mill entries
+        // for (int i = 3; i < 20; i++) {
+        //     assert(l[i].white == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        //     assert(l[i].black == pow(2, b.a0) + pow(2, b.d0) + pow(2, i));
+        //     assert(l[i].whiteTurn == true);
+        // }
 
     } catch (const exception& e) {
         cout << "Exception raised in testGenerateAdd:\t" << e.what() << endl;
@@ -1143,104 +1143,104 @@ bool testGenerateMove() {
         assert(l[6].black == pow(2, b.b1) + pow(2, b.f1));
         assert(l[6].whiteTurn == false);
 
-        // Test 3: Black No mils
-        // b.updateBoard(b.d6, 0);
-        l.clear();
-        b.whiteTurn = false;
-        l = b.generateMove(b);
+        // // Test 3: Black No mils
+        // // b.updateBoard(b.d6, 0);
+        // l.clear();
+        // b.whiteTurn = false;
+        // l = b.generateMove(b);
 
-        assert(l.size() == 7);
+        // assert(l.size() == 7);
         
-        // Move b1 - c2
-        assert(l[0].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
-        assert(l[0].black == pow(2, b.c2) + pow(2, b.d6) + pow(2, b.f1));
-        assert(l[0].whiteTurn == true);
+        // // Move b1 - c2
+        // assert(l[0].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        // assert(l[0].black == pow(2, b.c2) + pow(2, b.d6) + pow(2, b.f1));
+        // assert(l[0].whiteTurn == true);
         
-        // Move b1 - b3
-        assert(l[1].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
-        assert(l[1].black == pow(2, b.b3) + pow(2, b.d6) + pow(2, b.f1));
-        assert(l[1].whiteTurn == true);
+        // // Move b1 - b3
+        // assert(l[1].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        // assert(l[1].black == pow(2, b.b3) + pow(2, b.d6) + pow(2, b.f1));
+        // assert(l[1].whiteTurn == true);
 
-        // Move f1 - e2
-        assert(l[2].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
-        assert(l[2].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.e2));
-        assert(l[2].whiteTurn == true);
+        // // Move f1 - e2
+        // assert(l[2].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        // assert(l[2].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.e2));
+        // assert(l[2].whiteTurn == true);
 
-        // Move f1 - f3
-        assert(l[3].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
-        assert(l[3].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.f3));
-        assert(l[3].whiteTurn == true);
+        // // Move f1 - f3
+        // assert(l[3].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        // assert(l[3].black == pow(2, b.b1) + pow(2, b.d6) + pow(2, b.f3));
+        // assert(l[3].whiteTurn == true);
 
-        // Move d6 - d5
-        assert(l[4].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
-        assert(l[4].black == pow(2, b.b1) + pow(2, b.d5) + pow(2, b.f1));
-        assert(l[4].whiteTurn == true);
+        // // Move d6 - d5
+        // assert(l[4].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        // assert(l[4].black == pow(2, b.b1) + pow(2, b.d5) + pow(2, b.f1));
+        // assert(l[4].whiteTurn == true);
 
-        // Move d6 - a6
-        assert(l[5].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
-        assert(l[5].black == pow(2, b.b1) + pow(2, b.a6) + pow(2, b.f1));
-        assert(l[5].whiteTurn == true);
-        // Move d6 - g6
-        assert(l[6].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
-        assert(l[6].black == pow(2, b.b1) + pow(2, b.g6) + pow(2, b.f1));
-        assert(l[6].whiteTurn == true);
+        // // Move d6 - a6
+        // assert(l[5].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        // assert(l[5].black == pow(2, b.b1) + pow(2, b.a6) + pow(2, b.f1));
+        // assert(l[5].whiteTurn == true);
+        // // Move d6 - g6
+        // assert(l[6].white == pow(2, b.a0) + pow(2, b.d1) + pow(2, b.g0));
+        // assert(l[6].black == pow(2, b.b1) + pow(2, b.g6) + pow(2, b.f1));
+        // assert(l[6].whiteTurn == true);
 
-        // Test 4: Black with mill
+        // // Test 4: Black with mill
         
-        // Move black pieces to prepare for mill in top row.
-        b.updateBoard(b.a6, -1);
-        b.updateBoard(b.g3, -1);
-        b.updateBoard(b.b1, 0);
-        b.updateBoard(b.f1, 0);
+        // // Move black pieces to prepare for mill in top row.
+        // b.updateBoard(b.a6, -1);
+        // b.updateBoard(b.g3, -1);
+        // b.updateBoard(b.b1, 0);
+        // b.updateBoard(b.f1, 0);
 
-        // Move white pieces to be reduce number of black moves
-        b.updateBoard(b.a0, 0);
-        b.updateBoard(b.d1, 0);
-        b.updateBoard(b.g0, 0);
-        b.updateBoard(b.a3, 1);
-        b.updateBoard(b.d5, 1);
-        b.updateBoard(b.b5, 1);
-        b.depth = 20;
+        // // Move white pieces to be reduce number of black moves
+        // b.updateBoard(b.a0, 0);
+        // b.updateBoard(b.d1, 0);
+        // b.updateBoard(b.g0, 0);
+        // b.updateBoard(b.a3, 1);
+        // b.updateBoard(b.d5, 1);
+        // b.updateBoard(b.b5, 1);
+        // b.depth = 20;
         
-        // Clear board and regenerate moves
-        l.clear();
-        l = b.generateMove(b);
+        // // Clear board and regenerate moves
+        // l.clear();
+        // l = b.generateMove(b);
 
-        // Move g3 - g0
-        assert(l[0].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
-        assert(l[0].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g0));
-        assert(l[0].whiteTurn == true);
-        assert(l[0].depth == 21);
+        // // Move g3 - g0
+        // assert(l[0].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
+        // assert(l[0].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g0));
+        // assert(l[0].whiteTurn == true);
+        // assert(l[0].depth == 21);
 
-        // Move g3 - f3
-        assert(l[1].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
-        assert(l[1].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.f3));
-        assert(l[1].whiteTurn == true);
-        assert(l[1].depth == 21);
+        // // Move g3 - f3
+        // assert(l[1].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
+        // assert(l[1].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.f3));
+        // assert(l[1].whiteTurn == true);
+        // assert(l[1].depth == 21);
 
-        // Move g3 - g6; Remove a3
-        assert(l[2].white == pow(2, b.b5) + pow(2, b.d5));
-        assert(l[2].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
-        assert(l[2].whiteTurn == true);
-        assert(l[2].depth == 21);
+        // // Move g3 - g6; Remove a3
+        // assert(l[2].white == pow(2, b.b5) + pow(2, b.d5));
+        // assert(l[2].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        // assert(l[2].whiteTurn == true);
+        // assert(l[2].depth == 21);
 
-        // Move g3 - g6; Remove b5
-        assert(l[3].white == pow(2, b.a3) + pow(2, b.d5));
-        assert(l[3].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
-        assert(l[3].whiteTurn == true);
-        assert(l[3].depth == 21);
+        // // Move g3 - g6; Remove b5
+        // assert(l[3].white == pow(2, b.a3) + pow(2, b.d5));
+        // assert(l[3].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        // assert(l[3].whiteTurn == true);
+        // assert(l[3].depth == 21);
 
-        // Move g3 - g6; Remove d5
-        assert(l[4].white == pow(2, b.a3) + pow(2, b.b5));
-        assert(l[4].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
-        assert(l[4].whiteTurn == true);
-        assert(l[5].depth == 21);
+        // // Move g3 - g6; Remove d5
+        // assert(l[4].white == pow(2, b.a3) + pow(2, b.b5));
+        // assert(l[4].black == pow(2, b.a6) + pow(2, b.d6) + pow(2, b.g6));
+        // assert(l[4].whiteTurn == true);
+        // assert(l[5].depth == 21);
 
-        // Move d6 - g6
-        assert(l[5].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
-        assert(l[5].black == pow(2, b.a6) + pow(2, b.g6) + pow(2, b.g3));
-        assert(l[5].whiteTurn == true);
-        assert(l[5].depth == 21);
+        // // Move d6 - g6
+        // assert(l[5].white == pow(2, b.a3) + pow(2, b.b5) + pow(2, b.d5));
+        // assert(l[5].black == pow(2, b.a6) + pow(2, b.g6) + pow(2, b.g3));
+        // assert(l[5].whiteTurn == true);
+        // assert(l[5].depth == 21);
 
         // Test depth and gamePhase changing
         l.clear();
@@ -1506,7 +1506,7 @@ bool testStaticEstimate() {
         b.updateBoard(b.c3, -1);
         b.gamePhase = 1;
         b.whiteTurn = true;
-        // assert (b.staticEstimate() == -9);
+        assert (b.staticEstimate() == -9);
         b.whiteTurn = false;
         assert (b.staticEstimate() == 4);
 

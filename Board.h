@@ -68,6 +68,7 @@ class Board {
         vector<Board> generateAdd(Board&);
         vector<Board> generateMove(Board&);
         vector<Board> generateNextLevel(Board&); // Conglomerate of above 3
+        vector<Board> generateNextLevelOpponent(Board&); // Copy of generateNextLevel, but without swapping colors
         Board miniMaxSearch(Board&, int, int&);
 
 

@@ -622,8 +622,8 @@ void Board::generateRemove(Board& b, vector<Board>& l) {
                 b2.updateBoard(i, 0);
                 
                 // Revert to white
-                if (b2.whiteTurn == false)
-                    b2.swapColors();
+                // if (b2.whiteTurn == false)
+                //     b2.swapColors();
                 
                 // Update turn
                 b2.whiteTurn = !b2.whiteTurn;
@@ -690,9 +690,9 @@ vector<Board> Board::generateHopping(Board& b) {
     // Initialize variables
     vector<Board> l;
     
-    // Change board to false white
-    if (b.whiteTurn == false)
-        b.swapColors();
+    // // Change board to false white
+    // if (b.whiteTurn == false)
+    //     b.swapColors();
 
     // Start outer loop
     for (int i = 0; i < 23; i++) { // Loop checks all owned pieces
@@ -716,9 +716,9 @@ vector<Board> Board::generateHopping(Board& b) {
                     } else { // Otherwise, just push back the current board
                         
                         // Correct false-white
-                        if (b2.whiteTurn == false){
-                            b2.swapColors();
-                        }
+                        // if (b2.whiteTurn == false){
+                        //     b2.swapColors();
+                        // }
                         // Update turn
                         b2.whiteTurn = !b2.whiteTurn;
                         b2.depth++;
@@ -730,9 +730,9 @@ vector<Board> Board::generateHopping(Board& b) {
         }
     }
 
-    // Revert the board so white is white
-    if (b.whiteTurn == false)
-        b.swapColors();
+    // // Revert the board so white is white
+    // if (b.whiteTurn == false)
+    //     b.swapColors();
 
     return l;
 }
@@ -755,9 +755,9 @@ vector<Board> Board::generateAdd(Board& b) {
     // Initializations
     vector<Board> l;
 
-    // Change board to false white
-    if (b.whiteTurn == false)
-        b.swapColors();
+    // // Change board to false white
+    // if (b.whiteTurn == false)
+    //     b.swapColors();
 
     // Loop over each position on the board
     for (int i = 0; i < 23; i++) {
@@ -773,9 +773,9 @@ vector<Board> Board::generateAdd(Board& b) {
                 generateRemove(b_copy, l);
             } else {
                 // Correct board colors if we are at false-white
-                if (b_copy.whiteTurn == false) {
-                    b_copy.swapColors();
-                }
+                // if (b_copy.whiteTurn == false) {
+                //     b_copy.swapColors();
+                // }
                 // Update turn
                 b_copy.whiteTurn = !b_copy.whiteTurn;
                 b_copy.depth++;
@@ -789,9 +789,9 @@ vector<Board> Board::generateAdd(Board& b) {
         }
     }
 
-    // Revert the board so white is white
-    if (b.whiteTurn == false)
-        b.swapColors();
+    // // Revert the board so white is white
+    // if (b.whiteTurn == false)
+    //     b.swapColors();
 
     return l;
 }
@@ -807,9 +807,9 @@ vector<Board> Board::generateMove(Board& b) {
     vector<Board> l;
     vector<unsigned short int> n;
 
-    // Change board to false white
-    if (b.whiteTurn == false)
-        b.swapColors();
+    // // Change board to false white
+    // if (b.whiteTurn == false)
+    //     b.swapColors();
 
     // Loop over all moves on the board
     for(int i = 0; i < 23; i++) {
@@ -831,10 +831,10 @@ vector<Board> Board::generateMove(Board& b) {
                         generateRemove(b_copy, l);
                     } else {  // If there are no pieces to remove push the board as is
                         
-                        // Swap colors only if false-white
-                        if (b_copy.whiteTurn == false){
-                            b_copy.swapColors();
-                        }
+                        // // Swap colors only if false-white
+                        // if (b_copy.whiteTurn == false){
+                        //     b_copy.swapColors();
+                        // }
 
                         // Update turn
                         b_copy.whiteTurn = !b_copy.whiteTurn;
@@ -854,9 +854,9 @@ vector<Board> Board::generateMove(Board& b) {
         }
     }
 
-    // Revert the board so white is white
-    if (b.whiteTurn == false)
-        b.swapColors();
+    // // Revert the board so white is white
+    // if (b.whiteTurn == false)
+    //     b.swapColors();
 
     return l;
 }
@@ -864,6 +864,39 @@ vector<Board> Board::generateMove(Board& b) {
 
 vector<Board> Board::generateNextLevel(Board& b) {
     // Checks game phase and turn to fill a board's vector
+    
+    vector<Board> l;
+    l.clear();
+
+    // Manage turn by swapping colors
+    if (b.whiteTurn == false)
+        b.swapColors();
+    
+    if (b.gamePhase == 0)
+        l = generateAdd(b);
+    else if (
+        b.gamePhase == 2 && 
+        (b.whiteTurn == true && b.whiteCount <= 3) ||
+        (b.whiteTurn == false && b.blackCount <= 3)
+    ){
+        l = generateHopping(b);
+     }   
+    else
+        l = generateMove(b);
+    
+    // Manage turn by swapping colors
+    if (b.whiteTurn == false){
+        b.swapColors();
+        for (int i = 0; i < l.size(); i++){
+            l[i].swapColors();
+        }
+    }
+
+    return l;
+}
+
+vector<Board> Board::generateNextLevelOpponent(Board& b) {
+    // Copy of generateNextLevel, but without swapping colors
     
     if (b.gamePhase == 0)
         return generateAdd(b);
@@ -877,6 +910,7 @@ vector<Board> Board::generateNextLevel(Board& b) {
     else
         return generateMove(b);
 }
+
 
 
 int Board::staticEstimate() {
@@ -916,16 +950,18 @@ int Board::staticEstimate() {
                 Board temp_board(*this);
 
                 // swap colors to calculate from enemy's view
-                temp_board.swapColors();
-                // temp_board.whiteTurn = !temp_board.whiteTurn;
+                if (whiteTurn){
+                    temp_board.swapColors();
+                    temp_board.whiteTurn = !temp_board.whiteTurn;
+                }
 
-                temp_board.L = temp_board.generateNextLevel(temp_board);
+                temp_board.L = temp_board.generateNextLevelOpponent(temp_board);
 
                 // TODO: verify performance of L.size();
                 // Does this work without generating 
                 heuristic = whiteTurn ?
-                    1000 * (whiteCount - blackCount) + L.size() :
-                    1000 * (whiteCount - blackCount) - L.size();
+                    1000 * (whiteCount - blackCount) - temp_board.L.size() :
+                    1000 * (whiteCount - blackCount) + temp_board.L.size();
                 
                 L.clear();
                 return heuristic;
