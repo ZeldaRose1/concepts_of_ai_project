@@ -1570,7 +1570,7 @@ bool testMinMax() {
 
     // Test case for minMax function
     try {
-        // Test 1.1: White's turn, beginning of game
+        // Test 1.1: gamePhase==0; whiteTurn==true; even number search depth
         Board b1;
         b1.white = 0;
         b1.black = 0;
@@ -1578,6 +1578,7 @@ bool testMinMax() {
         b1.blackCount = 0;
         b1.whiteTurn = 1; // White's turn
         b1.gamePhase = 0; // Adding Phase
+        b1.depth = 0;
 
         int leaf_count = 0;
         int heuristic = b1.minMax(b1, 0, 2, leaf_count);
@@ -1588,13 +1589,13 @@ bool testMinMax() {
         assert(leaf_count == 506); // Ensure leaf nodes were evaluated
         leaf_count = 0;
 
-        // Test 1.0: base case no depth, beginning of game
+        // Test 1.2: gamePhase==0; whiteTurn==true; 0 search depth
         heuristic = b1.minMax(b1, 1, 1, leaf_count);
         assert(heuristic == 0);
-        assert(leaf_count == 1); // Ensure leaf nodes were evaluated
+        assert(leaf_count == 1);
         leaf_count = 0;
         
-        // Test 1.2: White's turn, odd depth beginning of game
+        // Test 1.2: gamePhase==0; whiteTurn==true; odd number search depth
         heuristic = b1.minMax(b1, 0, 1, leaf_count);
         cout << "heuristic: " << heuristic << endl;
 
@@ -1611,23 +1612,29 @@ bool testMinMax() {
         b2.whiteCount = 4;
         b2.blackCount = 4;
         b2.whiteTurn = 1;
+        b2.depth = 20;
         b2.gamePhase = 1;
 
         // Pull value from minMax function
         heuristic = b2.minMax(b2, 0, 0, leaf_count);
-        assert(heuristic == 7); // White has five moves remaining
+        assert(heuristic == -7); // Black has seven moves
         assert(leaf_count == 1);
         assert(b2.gamePhase == 1); // Ensure game phase is not changed
         leaf_count = 0;
 
         // Test 2.1: Midgame, white turn, odd depth
-        // Pull value from minMax function
-
-        // TODO: I think I found an error in updateBoard. 
+        // This test takes the minimum of the first layer
         b2.L.clear();
         heuristic = b2.minMax(b2, 0, 1, leaf_count);
-        // assert(heuristic == -7); // White has five moves remaining
-        // assert(leaf_count == 49);
+        assert(heuristic == 6); //
+        assert(leaf_count == 7);
+        leaf_count = 0;
+
+        // Test 2.2: Midgame, white turn, even depth
+        b2.L.clear();
+        heuristic = b2.minMax(b2, 0, 2, leaf_count);
+        assert(heuristic == -7); //
+        assert(leaf_count == 47);
         leaf_count = 0;
 
         return true;
@@ -1712,12 +1719,10 @@ int main() {
         cout << "testMinMax failed" << endl;
     }
 
-    /*
     if (!testMinMax()) {
         all_pass = false;
         cout << "testMinMax failed" << endl;
     }
-    */
 
 
     if (all_pass)

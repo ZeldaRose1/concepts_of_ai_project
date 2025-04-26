@@ -963,7 +963,6 @@ int Board::staticEstimate() {
                     1000 * (whiteCount - blackCount) - temp_board.L.size() :
                     1000 * (whiteCount - blackCount) + temp_board.L.size();
                 
-                L.clear();
                 return heuristic;
             }
         }
@@ -990,7 +989,7 @@ int Board::minMax(Board& b, int cur_level, int max_level, int& l_count) {
 
     // Incriment current level
     // cur_level++;
-    cout << "minMax executed at cur_level:\t" << cur_level << endl;
+    // cout << "minMax executed at cur_level:\t" << cur_level << endl;
 
     // Ensure move list is generated
     if (b.L.size() == 0)
@@ -1017,7 +1016,7 @@ int Board::maxMin(Board& b, int cur_level, int max_level, int& l_count) {
 
     // Incriment current level
     // cur_level++;
-    cout << "maxMin executed at cur_level:\t" << cur_level << endl;
+    // cout << "maxMin executed at cur_level:\t" << cur_level << endl;
 
     // Ensure move list is generated
     if (b.L.size() == 0)
