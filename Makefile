@@ -1,3 +1,9 @@
+abgame: Board.o ABGame.cpp Board.cpp
+	g++ -g -o abgame Board.o ABGame.cpp
+
+abopening: Board.o ABOpening.cpp Board.cpp
+	g++ -g -o abopening Board.o ABOpening.cpp
+
 minimax: Board.o MiniMaxOpening.cpp Board.cpp
 	g++ -g -o minimax Board.o MiniMaxOpening.cpp
 

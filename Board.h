@@ -62,22 +62,28 @@ class Board {
         
         
         // Generate list functions (Build tree)
-        bool closeMill(short int, Board& b); // Input board location; returns T/F if move completes a mill
-        void generateRemove(Board&, vector<Board>&);
         vector<Board> generateHopping(Board&);
         vector<Board> generateAdd(Board&);
         vector<Board> generateMove(Board&);
         vector<Board> generateNextLevel(Board&); // Conglomerate of above 3
         vector<Board> generateNextLevelOpponent(Board&); // Copy of generateNextLevel, but without swapping colors
-        Board miniMaxSearch(Board&, int, int&);
-
-
+        
+        
         // Helper functions
         void printBoard();
         vector<unsigned short int> neighbors(unsigned short int); // Returns vector of neighbors
+        bool closeMill(short int, Board& b); // Input board location; returns T/F if move completes a mill
+        void generateRemove(Board&, vector<Board>&);
         void swapColors(); // Changes white and black
         void setCounts(); // Updates the counts for white and black pieces
-        int minMax(Board&, int, int, int&);
-        int maxMin(Board&, int, int, int&);
+        
+        // Search functions
+        int minMax(Board&, int, int, int&); // Board input, current depth, max depth, leaf count
+        int maxMin(Board&, int, int, int&); // Board input, current depth, max depth, leaf count
+        Board miniMaxSearch(Board&, int, int&); // Board input, current depth, leaf count
+
+        int ABmM(Board&, int, int, int&, int, int); // Board input, current depth, max depth, leaf count, alpha, beta
+        int ABMm(Board&, int, int, int&, int, int); // Board input, current depth, max depth, leaf count, alpha, beta
+        Board alphaBetaSearch(Board&, int, int&); // Board input, max depth, leaf count
     };
     

@@ -23,6 +23,7 @@ bool testBoardConstructor(){
     return true;
 }
 
+
 bool testBoardCopyConstructor(){
     // This tests generates random data to fill the board with to 
     // check that the copy constructor functions as planned.
@@ -51,6 +52,7 @@ bool testBoardCopyConstructor(){
     }
     return true;
 }
+
 
 bool testCloseMill() {
     // Test function for Game::closeMill()
@@ -376,6 +378,7 @@ bool testCloseMill() {
     return true;
 }
 
+
 bool testNeighbors() {
     // Checks that all the values hard coded into Board's
     // neighbor function return the proper vector
@@ -486,6 +489,7 @@ bool testNeighbors() {
     return true;
     
 }
+
 
 bool testUpdateBoard() {
     // Tests the updateBoard function
@@ -658,6 +662,7 @@ bool testUpdateBoard() {
     return true;
 }
 
+
 bool testGenerateRemove() {
     /* 
         Validates behavior of GenerateRemove function.
@@ -769,6 +774,7 @@ bool testGenerateRemove() {
 
     return true;
 }
+
 
 bool testGenerateHopping() {
     /* Validates performance of endgame Board::generateHopping() function */
@@ -955,6 +961,7 @@ bool testGenerateHopping() {
     return true;
 }
 
+
 bool testGenerateAdd() {
     /*
         Validate performance of generate add
@@ -1059,6 +1066,7 @@ bool testGenerateAdd() {
     
     return true;
 }
+
 
 bool testGenerateMove() {
     /* Validates performance of midgame Game::generateMove() function */
@@ -1276,6 +1284,7 @@ bool testGenerateMove() {
     return true;
 }
 
+
 bool testSwapColors() {
     /* Validate behavior of Board::swapColors() */
     // Setup initial board
@@ -1315,6 +1324,7 @@ bool testSwapColors() {
     return true;
 }
 
+
 bool testSetCounts() {
     /* Validate behavior of Board::swapColors() */
     // Setup initial board
@@ -1342,6 +1352,7 @@ bool testSetCounts() {
     }
     return true;
 }
+
 
 bool testWriteBoard() {
     // Tests writeBoard function
@@ -1408,6 +1419,7 @@ bool testWriteBoard() {
 
     return success;
 }
+
 
 bool testReadBoard() {
     // Validate performance of Board::readBoard() function
@@ -1565,8 +1577,9 @@ bool testStaticEstimate() {
     }
 }
 
+
 bool testMinMax() {
-    // Under construction
+    // TODO: Build out cases for actual use - ie. min for black turn
 
     // Test case for minMax function
     try {
@@ -1643,6 +1656,114 @@ bool testMinMax() {
         return false;
     }
 }
+
+
+bool testABmM() {
+    /*
+        Validate performance of Board::ABmM() function
+    */
+    int alpha = -10005;
+    int beta = 10005;
+
+    // Test case for Alpha - Beta minMax function
+    try {
+        // Test 1.1: gamePhase==0; whiteTurn==true; even number search depth
+        Board b1;
+        b1.white = 0;
+        b1.black = 0;
+        b1.whiteCount = 0;
+        b1.blackCount = 0;
+        b1.whiteTurn = 1; // White's turn
+        b1.gamePhase = 0; // Adding Phase
+        b1.depth = 0;
+
+        int leaf_count = 0;
+        int heuristic = b1.ABmM(b1, 0, 2, leaf_count, alpha, beta);
+        cout << "heuristic: " << heuristic << endl;
+
+        // Expected heuristic: white and black are even, so heuristic = (1 - 1) = 0
+        // TODO: update heuristic check AND leaf count
+        assert(heuristic == 0);
+        assert(leaf_count == 44); // Ensure leaf nodes were evaluated
+        // Reset parameters
+        leaf_count = 0;
+
+        // Test 1.2: gamePhase==0; whiteTurn==true; 0 search depth
+        heuristic = b1.ABmM(b1, 1, 1, leaf_count, alpha, beta);
+        assert(heuristic == 0);
+        assert(leaf_count == 1);
+        // Reset parameters
+        leaf_count = 0;
+        
+        // Test 1.3: gamePhase==0; whiteTurn==true; odd number search depth
+        heuristic = b1.ABmM(b1, 0, 1, leaf_count, alpha, beta);
+
+        // Expected heuristic: white has the only piece on the board so heuristic = 1
+        assert(heuristic == 1);
+        assert(leaf_count == 23); // Ensure leaf nodes were evaluated
+        // Reset parameters
+        leaf_count = 0;
+
+        // Test 2.0: Contrived case for ABmM
+        Board b2;
+        b2.white = 0;
+        b2.black = 0;
+        b2.whiteCount = 0;
+        b2.blackCount = 0;
+        b2.whiteTurn = 0; // Black's turn (it's the minMax function)
+        b2.gamePhase = 0; // Adding Phase
+        b2.depth = 0;
+
+        // Make three nodes for level 1
+        Board b2_0, b2_1, b2_2;
+
+        // Make three nodes at level 2 for each node at level 1
+        Board b2_0_0, b2_0_1, b2_0_2;
+        Board b2_1_0, b2_1_1, b2_1_2;
+        Board b2_2_0, b2_2_1, b2_2_2;
+
+        b2_0_0.whiteCount = 3;
+        b2_0_1.whiteCount = 12;
+        b2_0_2.whiteCount = 8;
+
+        b2_1_0.whiteCount = 2;
+        b2_1_1.whiteCount = 4;
+        b2_1_2.whiteCount = 6;
+
+        b2_2_0.whiteCount = 14;
+        b2_2_1.whiteCount = 5;
+        b2_2_2.whiteCount = 2;
+
+        // Organize trees
+        b2.L.push_back(b2_0);
+        b2.L.push_back(b2_1);
+        b2.L.push_back(b2_2);
+        
+        b2.L[0].L.push_back(b2_0_0);
+        b2.L[0].L.push_back(b2_0_1);
+        b2.L[0].L.push_back(b2_0_2);
+
+        b2.L[1].L.push_back(b2_1_0);
+        b2.L[1].L.push_back(b2_1_1);
+        b2.L[1].L.push_back(b2_1_2);
+
+        b2.L[2].L.push_back(b2_2_0);
+        b2.L[2].L.push_back(b2_2_1);
+        b2.L[2].L.push_back(b2_2_2);
+        
+        // Evaluate heuristic
+        heuristic = b2.ABmM(b2, 0, 2, leaf_count, alpha, beta);
+        assert(heuristic == 6);
+        assert(leaf_count == 7);
+
+        return true;
+    } catch (...) {
+        cout << "testMinMax failed" << endl;
+        return false;
+    }
+}
+
+
 
 
 int main() {
@@ -1723,6 +1844,12 @@ int main() {
         all_pass = false;
         cout << "testMinMax failed" << endl;
     }
+
+    if (!testABmM()) {
+        all_pass = false;
+        cout << "testABmM failed" << endl;
+    }
+
 
 
     if (all_pass)

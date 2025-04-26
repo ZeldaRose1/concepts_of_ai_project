@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 Board::Board(){
     // Initialize the board's state
     white = 0;
@@ -17,6 +18,7 @@ Board::Board(){
     depth = 0;
 }
 
+
 Board::Board(const Board& b) {
     // Copy constructor
     white = b.white;
@@ -28,6 +30,7 @@ Board::Board(const Board& b) {
     heuristic = b.heuristic;
     depth = b.depth;
 }
+
 
 Board::Board(const char* in_path) {
     /*
@@ -88,6 +91,7 @@ Board::Board(const char* in_path) {
     in.close();
 }
 
+
 void Board::printBoard() {
     for (int i = 0; i < 23; i++){
         if (operator[](i) == -1)
@@ -100,6 +104,7 @@ void Board::printBoard() {
             cout << ' ';
     }
 };
+
 
 // Write index operator
 void Board::updateBoard(short int i, short int val) {
@@ -895,6 +900,7 @@ vector<Board> Board::generateNextLevel(Board& b) {
     return l;
 }
 
+
 vector<Board> Board::generateNextLevelOpponent(Board& b) {
     // Copy of generateNextLevel, but without swapping colors
     
@@ -912,19 +918,20 @@ vector<Board> Board::generateNextLevelOpponent(Board& b) {
 }
 
 
-
 int Board::staticEstimate() {
     // Calculates a heuristic after checking game phase
-
-    // Make sure the next level is generated
-    L.clear();
-    L = generateNextLevel(*this);
+    
     if (gamePhase == 0){
         // Heuristic for opening
         heuristic = whiteCount - blackCount;
-        return heuristic;
+        return heuristic;    
+    }
+    
+    // Make sure the next level is generated
+    L.clear();
+    L = generateNextLevel(*this);
 
-    } else if (gamePhase > 0) {
+    if (gamePhase > 0) {
         // Heuristic calculations for post opening
         if (blackCount <= 2){
             // Next move is victory for white (max)
@@ -1063,6 +1070,110 @@ Board Board::miniMaxSearch(Board& b, int max_level, int& leaves) {
     } else {
         for (int i = 0; i < b.L.size(); i++) {
             b.L[i].heuristic = b.minMax(b.L[i], cur_level, max_level, leaves);
+        }
+        
+        // Find minimum value for next move
+        for (int j = 0; j < b.L.size(); j++) {
+            if (temp_board.heuristic > b.L[j].heuristic)
+                temp_board = b.L[j];
+        }
+        return temp_board;
+    }
+}
+
+
+int Board::ABmM(Board& b, int cur_level, int max_level, int& l_count, int alpha, int beta) {
+    /*
+        Alpha-Beta pruning for MinMax search
+        Returns the heuristic value of the board
+    */
+
+    // Ensure move list is generated
+    if (b.L.size() == 0)
+        b.L = b.generateNextLevel(b);
+
+    // Check if b is a leaf node
+    if (b.heuristic == 10000 || b.heuristic == -10000 || cur_level == max_level) {
+        l_count++;
+        return b.staticEstimate();
+    }
+
+    else { // Not a leaf node
+        // Set v to max value
+        int value = 10000;
+        for (int i = 0; i < b.L.size(); i++) {
+            value = min(value, b.ABMm(b.L[i], cur_level + 1, max_level, l_count, alpha, beta));
+            if (value <= alpha)
+                return value;
+            beta = min(beta, value);
+        }
+        return value;
+    }
+}
+
+
+int Board::ABMm(Board& b, int cur_level, int max_level, int& l_count, int alpha, int beta) {
+    /*
+        Alpha-Beta pruning for MaxMin search
+        Returns the heuristic value of the board
+    */
+
+    // Ensure move list is generated
+    if (b.L.size() == 0)
+        b.L = b.generateNextLevel(b);
+
+    // Check if b is a leaf node
+    if (b.heuristic == 10000 || b.heuristic == -10000 || cur_level == max_level){
+        l_count++;
+        return b.staticEstimate();
+    }
+
+    else { // Not a leaf node
+        // Set v to min value
+        int value = -10000;
+        for (int i = 0; i < b.L.size(); i++) {
+            value = max(value, b.ABmM(b.L[i], cur_level + 1, max_level, l_count, alpha, beta));
+            if (value >= beta)
+                return value;
+            alpha = max(alpha, value);
+        }
+        return value;
+    }
+}
+
+
+Board Board::alphaBetaSearch(Board& b, int max_level, int& leaves) {
+    /*
+        Function outline:
+        1. Generate next level of moves
+        2. Fork based on whiteTurn of b
+        3. For each move, calculate heuristic value
+        4. Find and return the move with the best heuristic value
+    */
+
+    // Setup variables
+    int cur_level = 0;
+    b.L = generateNextLevel(b);
+    Board temp_board(b.L[0]);
+    int alpha = -100005;
+    int beta = 100005;
+
+    // Assign heuristic values based on who's turn it is and return it
+    if (whiteTurn == 1){
+        for (int i = 0; i < b.L.size(); i++) {
+            b.L[i].heuristic = b.ABMm(b.L[i], cur_level, max_level, leaves, alpha, beta);
+        }
+        
+        // Find maximum value for next move
+        for (int j = 0; j < b.L.size(); j++) {
+            if (temp_board.heuristic < b.L[j].heuristic)
+                temp_board = b.L[j];
+        }
+        return temp_board;
+
+    } else { // Black turn
+        for (int i = 0; i < b.L.size(); i++) {
+            b.L[i].heuristic = b.ABmM(b.L[i], cur_level, max_level, leaves, alpha, beta);
         }
         
         // Find minimum value for next move
