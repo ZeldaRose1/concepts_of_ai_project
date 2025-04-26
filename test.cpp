@@ -1717,10 +1717,24 @@ bool testABmM() {
         // Make three nodes for level 1
         Board b2_0, b2_1, b2_2;
 
-        // Make three nodes at level 2 for each node at level 1
+        // Make 9 nodes at level 2 (3 ^ level)
         Board b2_0_0, b2_0_1, b2_0_2;
         Board b2_1_0, b2_1_1, b2_1_2;
         Board b2_2_0, b2_2_1, b2_2_2;
+
+        // Make 27 nodes at level 3 (3 ^ level)
+        Board b2_0_0_0, b2_0_0_1, b2_0_0_2;
+        Board b2_0_1_0, b2_0_1_1, b2_0_1_2;
+        Board b2_0_2_0, b2_0_2_1, b2_0_2_2;
+
+        Board b2_1_0_0, b2_1_0_1, b2_1_0_2;
+        Board b2_1_1_0, b2_1_1_1, b2_1_1_2;
+        Board b2_1_2_0, b2_1_2_1, b2_1_2_2;
+
+        Board b2_2_0_0, b2_2_0_1, b2_2_0_2;
+        Board b2_2_1_0, b2_2_1_1, b2_2_1_2;
+        Board b2_2_2_0, b2_2_2_1, b2_2_2_2;
+
 
         b2_0_0.whiteCount = 3;
         b2_0_1.whiteCount = 12;
@@ -1733,6 +1747,36 @@ bool testABmM() {
         b2_2_0.whiteCount = 14;
         b2_2_1.whiteCount = 5;
         b2_2_2.whiteCount = 2;
+
+        b2_0_0_0.whiteCount = 12;
+        b2_0_0_1.whiteCount = 15;
+        b2_0_0_2.whiteCount = 4;
+        b2_0_1_0.whiteCount = 2;
+        b2_0_1_1.whiteCount = 9;
+        b2_0_1_2.whiteCount = 6;
+        b2_0_2_0.whiteCount = 15;
+        b2_0_2_1.whiteCount = 6;
+        b2_0_2_2.whiteCount = 4;
+
+        b2_1_0_0.whiteCount = 8;
+        b2_1_0_1.whiteCount = 7;
+        b2_1_0_2.whiteCount = 4;
+        b2_1_1_0.whiteCount = 1;
+        b2_1_1_1.whiteCount = 14;
+        b2_1_1_2.whiteCount = 4;
+        b2_1_2_0.whiteCount = 6;
+        b2_1_2_1.whiteCount = 15;
+        b2_1_2_2.whiteCount = 10;
+
+        b2_2_0_0.whiteCount = 15;
+        b2_2_0_1.whiteCount = 6;
+        b2_2_0_2.whiteCount = 14;
+        b2_2_1_0.whiteCount = 3;
+        b2_2_1_1.whiteCount = 8;
+        b2_2_1_2.whiteCount = 9;
+        b2_2_2_0.whiteCount = 13;
+        b2_2_2_1.whiteCount = 1;
+        b2_2_2_2.whiteCount = 2;
 
         // Organize trees
         b2.L.push_back(b2_0);
@@ -1750,11 +1794,54 @@ bool testABmM() {
         b2.L[2].L.push_back(b2_2_0);
         b2.L[2].L.push_back(b2_2_1);
         b2.L[2].L.push_back(b2_2_2);
+
+        // Level 3: branch 1
+        b2.L[0].L[0].L.push_back(b2_0_0_0);
+        b2.L[0].L[0].L.push_back(b2_0_0_1);
+        b2.L[0].L[0].L.push_back(b2_0_0_2);
+
+        b2.L[0].L[1].L.push_back(b2_0_1_0);
+        b2.L[0].L[1].L.push_back(b2_0_1_1);
+        b2.L[0].L[1].L.push_back(b2_0_1_2);
+
+        b2.L[0].L[2].L.push_back(b2_0_2_0);
+        b2.L[0].L[2].L.push_back(b2_0_2_1);
+        b2.L[0].L[2].L.push_back(b2_0_2_2);
+
+        // Level 3: branch 2
+        b2.L[1].L[0].L.push_back(b2_1_0_0);
+        b2.L[1].L[0].L.push_back(b2_1_0_1);
+        b2.L[1].L[0].L.push_back(b2_1_0_2);
+       
+        b2.L[1].L[1].L.push_back(b2_1_1_0);
+        b2.L[1].L[1].L.push_back(b2_1_1_1);
+        b2.L[1].L[1].L.push_back(b2_1_1_2);
+       
+        b2.L[1].L[2].L.push_back(b2_1_2_0);
+        b2.L[1].L[2].L.push_back(b2_1_2_1);
+        b2.L[1].L[2].L.push_back(b2_1_2_2);
+
+        // Level 3: branch 3
+        b2.L[2].L[0].L.push_back(b2_2_0_0);
+        b2.L[2].L[0].L.push_back(b2_2_0_1);
+        b2.L[2].L[0].L.push_back(b2_2_0_2);
+        b2.L[2].L[1].L.push_back(b2_2_1_0);
+        b2.L[2].L[1].L.push_back(b2_2_1_1);
+        b2.L[2].L[1].L.push_back(b2_2_1_2);
+        b2.L[2].L[2].L.push_back(b2_2_2_0);
+        b2.L[2].L[2].L.push_back(b2_2_2_1);
+        b2.L[2].L[2].L.push_back(b2_2_2_2);
         
         // Evaluate heuristic
         heuristic = b2.ABmM(b2, 0, 2, leaf_count, alpha, beta);
         assert(heuristic == 6);
         assert(leaf_count == 7);
+        leaf_count = 0;
+
+        // Test level 3
+        heuristic = b2.ABmM(b2, 0, 3, leaf_count, alpha, beta);
+        assert(heuristic == 4);
+        assert(leaf_count == 13);
 
         return true;
     } catch (...) {
@@ -1763,7 +1850,197 @@ bool testABmM() {
     }
 }
 
+bool testABMm() {
+    /*
+        Validate performance of Board::ABMm() function
+    */
+    int alpha = -10005;
+    int beta = 10005;
 
+    // Test case for Alpha - Beta maxMin function
+    try {
+        // Test 1.1: gamePhase==0; whiteTurn==true; even number search depth
+        Board b1;
+        b1.white = 0;
+        b1.black = 0;
+        b1.whiteCount = 0;
+        b1.blackCount = 0;
+        b1.whiteTurn = 1; // White's turn
+        b1.gamePhase = 0; // Adding Phase
+        b1.depth = 0;
+
+        int leaf_count = 0;
+        int heuristic = b1.ABMm(b1, 0, 2, leaf_count, alpha, beta);
+        cout << "heuristic: " << heuristic << endl;
+
+        // Expected heuristic: white and black are even, so heuristic = (1 - 1) = 0
+        // TODO: update heuristic check AND leaf count
+        assert(heuristic == 0);
+        assert(leaf_count == 44); // Ensure leaf nodes were evaluated
+        // Reset parameters
+        leaf_count = 0;
+
+        // Test 1.2: gamePhase==0; whiteTurn==true; 0 search depth
+        heuristic = b1.ABMm(b1, 1, 1, leaf_count, alpha, beta);
+        assert(heuristic == 0);
+        assert(leaf_count == 1);
+        // Reset parameters
+        leaf_count = 0;
+        
+        // Test 1.3: gamePhase==0; whiteTurn==true; odd number search depth
+        heuristic = b1.ABMm(b1, 0, 1, leaf_count, alpha, beta);
+
+        // Expected heuristic: white has the only piece on the board so heuristic = 1
+        assert(heuristic == 1);
+        assert(leaf_count == 23); // Ensure leaf nodes were evaluated
+        // Reset parameters
+        leaf_count = 0;
+
+        // Test 2.0: Contrived case for ABmM
+        Board b2;
+        b2.white = 0;
+        b2.black = 0;
+        b2.whiteCount = 0;
+        b2.blackCount = 0;
+        b2.whiteTurn = 1; // Black's turn (it's the minMax function)
+        b2.gamePhase = 0; // Adding Phase
+        b2.depth = 0;
+
+        // Make three nodes for level 1
+        Board b2_0, b2_1, b2_2;
+
+        // Make 9 nodes at level 2 (3 ^ level)
+        Board b2_0_0, b2_0_1, b2_0_2;
+        Board b2_1_0, b2_1_1, b2_1_2;
+        Board b2_2_0, b2_2_1, b2_2_2;
+
+        // Make 27 nodes at level 3 (3 ^ level)
+        Board b2_0_0_0, b2_0_0_1, b2_0_0_2;
+        Board b2_0_1_0, b2_0_1_1, b2_0_1_2;
+        Board b2_0_2_0, b2_0_2_1, b2_0_2_2;
+
+        Board b2_1_0_0, b2_1_0_1, b2_1_0_2;
+        Board b2_1_1_0, b2_1_1_1, b2_1_1_2;
+        Board b2_1_2_0, b2_1_2_1, b2_1_2_2;
+
+        Board b2_2_0_0, b2_2_0_1, b2_2_0_2;
+        Board b2_2_1_0, b2_2_1_1, b2_2_1_2;
+        Board b2_2_2_0, b2_2_2_1, b2_2_2_2;
+
+
+        b2_0_0.whiteCount = 3;
+        b2_0_1.whiteCount = 12;
+        b2_0_2.whiteCount = 8;
+
+        b2_1_0.whiteCount = 2;
+        b2_1_1.whiteCount = 4;
+        b2_1_2.whiteCount = 6;
+
+        b2_2_0.whiteCount = 14;
+        b2_2_1.whiteCount = 5;
+        b2_2_2.whiteCount = 2;
+
+        b2_0_0_0.whiteCount = 12;
+        b2_0_0_1.whiteCount = 15;
+        b2_0_0_2.whiteCount = 4;
+        b2_0_1_0.whiteCount = 2;
+        b2_0_1_1.whiteCount = 9;
+        b2_0_1_2.whiteCount = 6;
+        b2_0_2_0.whiteCount = 15;
+        b2_0_2_1.whiteCount = 6;
+        b2_0_2_2.whiteCount = 4;
+
+        b2_1_0_0.whiteCount = 8;
+        b2_1_0_1.whiteCount = 7;
+        b2_1_0_2.whiteCount = 4;
+        b2_1_1_0.whiteCount = 1;
+        b2_1_1_1.whiteCount = 14;
+        b2_1_1_2.whiteCount = 4;
+        b2_1_2_0.whiteCount = 6;
+        b2_1_2_1.whiteCount = 15;
+        b2_1_2_2.whiteCount = 10;
+
+        b2_2_0_0.whiteCount = 15;
+        b2_2_0_1.whiteCount = 6;
+        b2_2_0_2.whiteCount = 14;
+        b2_2_1_0.whiteCount = 3;
+        b2_2_1_1.whiteCount = 8;
+        b2_2_1_2.whiteCount = 9;
+        b2_2_2_0.whiteCount = 13;
+        b2_2_2_1.whiteCount = 1;
+        b2_2_2_2.whiteCount = 2;
+
+        // Organize trees
+        b2.L.push_back(b2_0);
+        b2.L.push_back(b2_1);
+        b2.L.push_back(b2_2);
+        
+        b2.L[0].L.push_back(b2_0_0);
+        b2.L[0].L.push_back(b2_0_1);
+        b2.L[0].L.push_back(b2_0_2);
+
+        b2.L[1].L.push_back(b2_1_0);
+        b2.L[1].L.push_back(b2_1_1);
+        b2.L[1].L.push_back(b2_1_2);
+
+        b2.L[2].L.push_back(b2_2_0);
+        b2.L[2].L.push_back(b2_2_1);
+        b2.L[2].L.push_back(b2_2_2);
+
+        // Level 3: branch 1
+        b2.L[0].L[0].L.push_back(b2_0_0_0);
+        b2.L[0].L[0].L.push_back(b2_0_0_1);
+        b2.L[0].L[0].L.push_back(b2_0_0_2);
+
+        b2.L[0].L[1].L.push_back(b2_0_1_0);
+        b2.L[0].L[1].L.push_back(b2_0_1_1);
+        b2.L[0].L[1].L.push_back(b2_0_1_2);
+
+        b2.L[0].L[2].L.push_back(b2_0_2_0);
+        b2.L[0].L[2].L.push_back(b2_0_2_1);
+        b2.L[0].L[2].L.push_back(b2_0_2_2);
+
+        // Level 3: branch 2
+        b2.L[1].L[0].L.push_back(b2_1_0_0);
+        b2.L[1].L[0].L.push_back(b2_1_0_1);
+        b2.L[1].L[0].L.push_back(b2_1_0_2);
+       
+        b2.L[1].L[1].L.push_back(b2_1_1_0);
+        b2.L[1].L[1].L.push_back(b2_1_1_1);
+        b2.L[1].L[1].L.push_back(b2_1_1_2);
+       
+        b2.L[1].L[2].L.push_back(b2_1_2_0);
+        b2.L[1].L[2].L.push_back(b2_1_2_1);
+        b2.L[1].L[2].L.push_back(b2_1_2_2);
+
+        // Level 3: branch 3
+        b2.L[2].L[0].L.push_back(b2_2_0_0);
+        b2.L[2].L[0].L.push_back(b2_2_0_1);
+        b2.L[2].L[0].L.push_back(b2_2_0_2);
+        b2.L[2].L[1].L.push_back(b2_2_1_0);
+        b2.L[2].L[1].L.push_back(b2_2_1_1);
+        b2.L[2].L[1].L.push_back(b2_2_1_2);
+        b2.L[2].L[2].L.push_back(b2_2_2_0);
+        b2.L[2].L[2].L.push_back(b2_2_2_1);
+        b2.L[2].L[2].L.push_back(b2_2_2_2);
+        
+        // Evaluate heuristic
+        heuristic = b2.ABMm(b2, 0, 2, leaf_count, alpha, beta);
+        assert(heuristic == 3);
+        assert(leaf_count == 7);
+        leaf_count = 0;
+
+        // Test level 3
+        heuristic = b2.ABMm(b2, 0, 3, leaf_count, alpha, beta);
+        assert(heuristic == 9);
+        assert(leaf_count == 16);
+
+        return true;
+    } catch (...) {
+        cout << "testMinMax failed" << endl;
+        return false;
+    }
+}
 
 
 int main() {
@@ -1850,6 +2127,10 @@ int main() {
         cout << "testABmM failed" << endl;
     }
 
+    if (!testABMm()) {
+        all_pass = false;
+        cout << "testABMm failed" << endl;
+    }
 
 
     if (all_pass)
