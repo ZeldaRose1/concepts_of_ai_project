@@ -3,6 +3,8 @@
 
 /*
 This file will act as a driver to control minimax search
+This is a copy of the MiniMaxGame program, but it forces
+the board to start on black's turn.
 
 Arg1 is the input .txt file
 Arg2 is the output file
@@ -28,6 +30,7 @@ int main (int argc, char *argv[]) {
     // Load board from file
     cout << argv[1] << endl;
     Board b(argv[1]);
+    b.whiteTurn = false;  // Force black turn
     int cur_iter = 0;
     cout << argv[3] << endl;
     int max_depth = atoi(argv[3]);
@@ -39,6 +42,8 @@ int main (int argc, char *argv[]) {
 
     cout << "Input Position:  ";
     b.printBoard();
+        
+        
     
     cout << "\nOutput Position:  ";
     output.printBoard();

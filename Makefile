@@ -1,11 +1,29 @@
+minimaxopeningimproved: Board.o MiniMaxOpeningImproved.cpp Board.cpp
+	g++ -g -o minimaxopeningimproved Board.o MiniMaxOpeningImproved.cpp
+
+minimaxgameimproved: Board.o MiniMaxGameImproved.cpp Board.cpp
+	g++ -g -o minimaxgameimproved Board.o MiniMaxGameImproved.cpp
+
+abgameblack: Board.o ABGameBlack.cpp Board.cpp
+	g++ -g -o abgameblack Board.o ABGameBlack.cpp
+
+abopeningblack: Board.o ABOpeningBlack.cpp Board.cpp
+	g++ -g -o abopeningblack Board.o ABOpeningBlack.cpp
+
+minimaxopeningblack: Board.o MiniMaxOpeningBlack.cpp Board.cpp
+	g++ -g -o minimaxopeningblack Board.o MiniMaxOpeningBlack.cpp
+
+minimaxgameblack: Board.o MiniMaxGameBlack.cpp Board.cpp
+	g++ -g -o minimaxgameblack Board.o MiniMaxGameBlack.cpp
+
 abgame: Board.o ABGame.cpp Board.cpp
 	g++ -g -o abgame Board.o ABGame.cpp
 
 abopening: Board.o ABOpening.cpp Board.cpp
 	g++ -g -o abopening Board.o ABOpening.cpp
 
-minimax: Board.o MiniMaxOpening.cpp Board.cpp
-	g++ -g -o minimax Board.o MiniMaxOpening.cpp
+minimaxopening: Board.o MiniMaxOpening.cpp Board.cpp
+	g++ -g -o minimaxopening Board.o MiniMaxOpening.cpp
 
 minimaxgame: Board.o MiniMaxGame.cpp Board.cpp
 	g++ -g -o minimaxgame Board.o MiniMaxGame.cpp
@@ -34,9 +52,57 @@ clean:
 	fi
 
 	@if \
-		[ -f minimax ]; \
+		[ -f abopeningblack ]; \
 		then \
-		rm minimax; \
+		rm abopeningblack; \
+	fi
+
+	@if \
+		[ -f abgameblack ]; \
+		then \
+		rm abgameblack; \
+	fi
+	
+	@if \
+		[ -f minimaxopeningimproved ]; \
+		then \
+		rm minimaxopeningimproved; \
+	fi
+
+	@if \
+		[ -f minimaxgameimproved ]; \
+		then \
+		rm minimaxgameimproved; \
+	fi
+
+	@if \
+		[ -f minimaxopeningblack ]; \
+		then \
+		rm minimaxopeningblack; \
+	fi
+
+	@if \
+		[ -f minimaxgameblack ]; \
+		then \
+		rm minimaxgameblack; \
+	fi
+	
+	@if \
+		[ -f abopening ]; \
+		then \
+		rm abopening; \
+	fi
+
+	@if \
+		[ -f abgame ]; \
+		then \
+		rm abgame; \
+	fi
+	
+	@if \
+		[ -f minimaxopening ]; \
+		then \
+		rm minimaxopening; \
 	fi
 
 	@if \

@@ -7,6 +7,14 @@ abopening
 abgame
 input
 output
+minimaxopening
+minimaxgame
+minimaxopeningblack
+minimaxgameblack
+abopeningblack
+abgameblack
+minimaxgameimproved
+minimaxopeningimproved
 
 # Compiled files
 test

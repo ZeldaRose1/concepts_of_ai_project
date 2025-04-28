@@ -17,6 +17,8 @@ The input file must be three lines with the following format:
     Fourth line: Single int with the number of turns played
 */
 
+// Please note, this is an exact copy of the MiniMaxOpening.cpp file
+
 
 int main (int argc, char *argv[]) {
     // Verify the proper number of arguments.
@@ -35,11 +37,11 @@ int main (int argc, char *argv[]) {
 
 
     // Loop through the iterations
-    Board output = b.miniMaxSearch(b, max_depth, leaf_count);
+    Board output = b.miniMaxSearchImproved(b, max_depth, leaf_count);
 
     cout << "Input Position:  ";
     b.printBoard();
-    
+        
     cout << "\nOutput Position:  ";
     output.printBoard();
 
@@ -48,7 +50,7 @@ int main (int argc, char *argv[]) {
     cout << "\nPositions evaluated by static estimation:";
     cout << leaf_count << endl;
 
-    cout << "MINIMAX estimate: " << output.heuristic << endl;
+    cout << "MINIMAX *Improved* estimate: " << output.heuristic_imp << endl;
 
     return 0;
 }

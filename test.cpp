@@ -1578,9 +1578,111 @@ bool testStaticEstimate() {
 }
 
 
-bool testMinMax() {
-    // TODO: Build out cases for actual use - ie. min for black turn
+bool testStaticEstimateImproved() {
+    // Validate performance of Board::staticEstimate() function
+    float result, compare = 0;
 
+    try {
+        // Test 1: Game phase 0
+        Board b;
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.a6, -1);
+        b.updateBoard(b.b1, -1);
+        b.whiteTurn = true;
+        result = (floor(b.staticEstimateImproved() * 100) / 100);
+        compare = (floor(((1) + (9 / 5.) - (7 / 5.)) * 100) / 100);
+        assert (result == compare);
+        b.updateBoard(b.g3, -1);
+        b.updateBoard(b.f5, -1);
+        result = (floor(b.staticEstimateImproved() * 100) / 100);
+        compare = (floor(((-1) + (9 / 5.) - (14 / 5.)) * 100) / 100);
+        assert (result == compare);
+
+        // Test 2: Game phase 1
+        b.white = 0;
+        b.whiteCount = 0;
+        b.black = 0;
+        b.blackCount = 0;
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.b1, 1);
+        b.updateBoard(b.a6, -1);
+        b.updateBoard(b.d1, -1);
+        b.updateBoard(b.g3, -1);
+        b.updateBoard(b.c3, -1);
+        b.gamePhase = 1;
+        b.whiteTurn = true;
+        result = b.staticEstimateImproved();
+        compare = (1000 / 5.) - 9;
+        assert (round((result - compare) * 10) == 0);
+        b.whiteTurn = false;
+        result = b.staticEstimateImproved();
+        compare = (1000 / 5.) + 4;
+        assert (round((result - compare) * 10) == 0);
+        
+
+        // Test 3 Final moves
+        b.white = 0;
+        b.whiteCount = 0;
+        b.black = 0;
+        b.blackCount = 0;
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.b1, -1);
+        b.updateBoard(b.a6, -1);
+        b.gamePhase = 2;
+        result = b.staticEstimateImproved();
+        assert (b.staticEstimateImproved() == 10000);
+        b.updateBoard(b.g0, -1);
+        result = b.staticEstimateImproved();
+        assert (b.staticEstimateImproved() == -10000);
+
+        // Test 4: No moves remaining
+        b.white = 0;
+        b.whiteCount = 0;
+        b.black = 0;
+        b.blackCount = 0;
+        b.updateBoard(b.a0, 1);
+        b.updateBoard(b.d0, 1);
+        b.updateBoard(b.g0, 1);
+        b.updateBoard(b.d1, 1);
+        b.updateBoard(b.b1, -1);
+        b.updateBoard(b.f1, -1);
+        b.updateBoard(b.g3, -1);
+        b.updateBoard(b.a3, -1);
+        b.whiteTurn = true;
+        b.gamePhase = 1;
+        assert (b.staticEstimateImproved() == -10000);
+        b.white = 0;
+        b.whiteCount = 0;
+        b.black = 0;
+        b.blackCount = 0;
+        b.updateBoard(b.a0, -1);
+        b.updateBoard(b.d0, -1);
+        b.updateBoard(b.g0, -1);
+        b.updateBoard(b.d1, -1);
+        b.updateBoard(b.b1, 1);
+        b.updateBoard(b.f1, 1);
+        b.updateBoard(b.g3, 1);
+        b.updateBoard(b.a3, 1);
+        b.whiteTurn = false;
+        b.gamePhase = 1;
+        assert (b.staticEstimateImproved() == 10000);
+
+
+        return true;
+    } catch (...) {
+        cout << "A test case for staticEstimate failed!" << endl;
+        return false;
+    }
+}
+
+
+bool testMinMax() {
     // Test case for minMax function
     try {
         // Test 1.1: gamePhase==0; whiteTurn==true; even number search depth
@@ -1656,6 +1758,86 @@ bool testMinMax() {
         return false;
     }
 }
+
+
+// bool testMinMaxImproved() {
+//     // TODO: Update test cases for improved heuristic
+
+//     // Test case for minMax function
+//     try {
+//         // Test 1.1: gamePhase==0; whiteTurn==true; even number search depth
+//         Board b1;
+//         b1.white = 0;
+//         b1.black = 0;
+//         b1.whiteCount = 0;
+//         b1.blackCount = 0;
+//         b1.whiteTurn = 1; // White's turn
+//         b1.gamePhase = 0; // Adding Phase
+//         b1.depth = 0;
+
+//         int leaf_count = 0;
+//         int heuristic = b1.minMax(b1, 0, 2, leaf_count);
+//         cout << "heuristic: " << heuristic << endl;
+
+//         // Expected heuristic: white and black are even, so heuristic = (1 - 1) = 0
+//         assert(heuristic == 0);
+//         assert(leaf_count == 506); // Ensure leaf nodes were evaluated
+//         leaf_count = 0;
+
+//         // Test 1.2: gamePhase==0; whiteTurn==true; 0 search depth
+//         heuristic = b1.minMax(b1, 1, 1, leaf_count);
+//         assert(heuristic == 0);
+//         assert(leaf_count == 1);
+//         leaf_count = 0;
+        
+//         // Test 1.2: gamePhase==0; whiteTurn==true; odd number search depth
+//         heuristic = b1.minMax(b1, 0, 1, leaf_count);
+//         cout << "heuristic: " << heuristic << endl;
+
+//         // Expected heuristic: white has the only piece on the board so heuristic = 1
+//         assert(heuristic == 1);
+//         assert(leaf_count == 23); // Ensure leaf nodes were evaluated
+//         leaf_count = 0;
+
+//         // Test 2.0: base case no depth, midgame
+//         // Update board for next test
+//         Board b2;
+//         b2.white = pow(2, b2.a0) + pow(2, b2.d0) + pow(2, b2.g0) + pow(2, b2.b1); // Fill bottom row with white
+//         b2.black = pow(2, b2.a6) + pow(2, b2.d6) + pow(2, b2.g6) + pow(2, b2.f5); // Fill top row with white
+//         b2.whiteCount = 4;
+//         b2.blackCount = 4;
+//         b2.whiteTurn = 1;
+//         b2.depth = 20;
+//         b2.gamePhase = 1;
+
+//         // Pull value from minMax function
+//         heuristic = b2.minMax(b2, 0, 0, leaf_count);
+//         assert(heuristic == -7); // Black has seven moves
+//         assert(leaf_count == 1);
+//         assert(b2.gamePhase == 1); // Ensure game phase is not changed
+//         leaf_count = 0;
+
+//         // Test 2.1: Midgame, white turn, odd depth
+//         // This test takes the minimum of the first layer
+//         b2.L.clear();
+//         heuristic = b2.minMax(b2, 0, 1, leaf_count);
+//         assert(heuristic == 6); //
+//         assert(leaf_count == 7);
+//         leaf_count = 0;
+
+//         // Test 2.2: Midgame, white turn, even depth
+//         b2.L.clear();
+//         heuristic = b2.minMax(b2, 0, 2, leaf_count);
+//         assert(heuristic == -7); //
+//         assert(leaf_count == 47);
+//         leaf_count = 0;
+
+//         return true;
+//     } catch (...) {
+//         cout << "testMinMax failed" << endl;
+//         return false;
+//     }
+// }
 
 
 bool testABmM() {
@@ -2114,7 +2296,7 @@ int main() {
 
     if (!testStaticEstimate()) {
         all_pass = false;
-        cout << "testMinMax failed" << endl;
+        cout << "testStaticEstmate failed" << endl;
     }
 
     if (!testMinMax()) {
@@ -2131,6 +2313,16 @@ int main() {
         all_pass = false;
         cout << "testABMm failed" << endl;
     }
+
+    if (!testStaticEstimateImproved()) {
+        all_pass = false;
+        cout << "testStaticEstimateImproved failed" << endl;
+    }
+
+    // if (!testMinMaxImproved()) {
+    //     all_pass = false;
+    //     cout << "testMinMaxImproved failed" << endl;
+    // }
 
 
     if (all_pass)

@@ -35,7 +35,7 @@ int main (int argc, char *argv[]) {
 
 
     // Loop through the iterations
-    Board output = b.miniMaxSearch(b, max_depth, leaf_count);
+    Board output = b.miniMaxSearchImproved(b, max_depth, leaf_count);
 
     cout << "Input Position:  ";
     b.printBoard();
@@ -48,7 +48,7 @@ int main (int argc, char *argv[]) {
     cout << "\nPositions evaluated by static estimation:";
     cout << leaf_count << endl;
 
-    cout << "MINIMAX estimate: " << output.heuristic << endl;
+    cout << "MINIMAX *Improved* estimate: " << output.heuristic_imp << endl;
 
     return 0;
 }

@@ -12,6 +12,7 @@ class Board {
         unsigned short int blackCount;
         unsigned short int depth;
         int heuristic;
+        float heuristic_imp; // improved heuristic
         bool whiteTurn;
         short int gamePhase; // 0 for placement phase 1 for move 2 for jumping
         vector<Board> L;
@@ -59,6 +60,7 @@ class Board {
         void updateBoard(short int, short int); // index, (+1, 0, or -1) for val
         int writeBoard(string); // Saves status of current board to a .txt file
         int staticEstimate(); // Calculates heuristic
+        float staticEstimateImproved(); // Calculates heuristic for passed board
         
         
         // Generate list functions (Build tree)
@@ -81,6 +83,10 @@ class Board {
         int minMax(Board&, int, int, int&); // Board input, current depth, max depth, leaf count
         int maxMin(Board&, int, int, int&); // Board input, current depth, max depth, leaf count
         Board miniMaxSearch(Board&, int, int&); // Board input, current depth, leaf count
+
+        int minMaxImproved(Board&, int, int, int&); // Board input, current depth, max depth, leaf count
+        int maxMinImproved(Board&, int, int, int&); // Board input, current depth, max depth, leaf count
+        Board miniMaxSearchImproved(Board&, int, int&); // Board input, current depth, leaf count
 
         int ABmM(Board&, int, int, int&, int, int); // Board input, current depth, max depth, leaf count, alpha, beta
         int ABMm(Board&, int, int, int&, int, int); // Board input, current depth, max depth, leaf count, alpha, beta

@@ -14,6 +14,7 @@ The input file must be three lines with the following format:
     Second line: Single int with a 1 for white's turn and 0 for black's
     Third line: Single int with a 0 for opening phase, 1 for midgame,
         and 2 for endgame
+    Fourth line: Single int with the number of turns played
 */
 
 
@@ -39,8 +40,6 @@ int main (int argc, char *argv[]) {
     cout << "Input Position:  ";
     b.printBoard();
         
-        
-    
     cout << "\nOutput Position:  ";
     output.printBoard();
 
@@ -50,7 +49,6 @@ int main (int argc, char *argv[]) {
     cout << leaf_count << endl;
 
     cout << "ALPHA-BETA estimate: " << output.heuristic << endl;
-    cout << "output.staticEstimate(): " << output.staticEstimate() << endl;
 
     return 0;
 }

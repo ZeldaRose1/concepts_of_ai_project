@@ -14,6 +14,7 @@ The input file must be three lines with the following format:
     Second line: Single int with a 1 for white's turn and 0 for black's
     Third line: Single int with a 0 for opening phase, 1 for midgame,
         and 2 for endgame
+    Fourth line: Single int with the number of turns played
 */
 
 // Please note, this is an exact copy of the MiniMaxOpening.cpp file
@@ -39,30 +40,10 @@ int main (int argc, char *argv[]) {
     Board output = b.miniMaxSearch(b, max_depth, leaf_count);
 
     cout << "Input Position:  ";
-    for (int i = 0; i < 23; i++){
-        if (b[i] == -1)
-            cout << 'B';
-        else if (b[i] == 1)
-            cout << 'W';
-        else if (b[i] == 0)
-            cout << 'x';
-        else
-            cout << ' ';
-    }
+    b.printBoard();
         
-        
-    
     cout << "\nOutput Position:  ";
-    for (int i = 0; i < 23; i++){
-        if (output[i] == -1)
-            cout << 'B';
-        else if (output[i] == 1)
-            cout << 'W';
-        else if (output[i] == 0)
-            cout << 'x';
-        else
-            cout << ' ';
-    }
+    output.printBoard();
 
     output.writeBoard(argv[2]);
 
@@ -70,7 +51,6 @@ int main (int argc, char *argv[]) {
     cout << leaf_count << endl;
 
     cout << "MINIMAX estimate: " << output.heuristic << endl;
-    cout << "output.staticEstimate(): " << output.staticEstimate() << endl;
 
     return 0;
 }
