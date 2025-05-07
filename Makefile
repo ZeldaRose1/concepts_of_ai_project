@@ -130,4 +130,4 @@ clean:
 	fi
 
 zip:
-	zip CoAI_group30_rose_zelda_semester_project.zip *.o *.h *.cpp Makefile README.md
+	zip CoAI_group30_rose_zelda_semester_project.zip *.h *.cpp Makefile README.md ../rose-zelda_project_report.pdf

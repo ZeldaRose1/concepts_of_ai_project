@@ -45,6 +45,9 @@ Board::Board(const char* in_path) {
             
             Third line is a single int with 0 being the opening phase,
             1 being the midgame phase, and 2 being the endgame phase.
+
+            Fourth line is the number of turns that have passed. Game
+            phase moves to midgame at turn 18
     */
 
     // Initialize and open file
@@ -66,7 +69,9 @@ Board::Board(const char* in_path) {
         if (content[i + offset] == '-'){
             offset += 1;
             updateBoard(i, -1);
-        } else if (content[i + offset] == '0') {
+        } else if (content[i + offset] == '-' || content[i + offset] == 'B' || content[i + offset] == 'b') {
+            updateBoard(i, -1);
+        } else if (content[i + offset] == '0' || content[i + offset] == 'X' || content[i + offset] == 'x') {
             updateBoard(i, 0);
         } else
             updateBoard(i, 1);

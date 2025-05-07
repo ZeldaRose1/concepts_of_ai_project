@@ -1431,6 +1431,9 @@ bool testReadBoard() {
     ofstream o2;
     o2.open("test_read123456789_2.txt");
     o2 << "101-10-100000000000000000\n1\n0";
+    ofstream o3;
+    o3.open("test_read123456789_3.txt");
+    o3 << "xxxWWWBBBxxxxxxxxxxxxxx\n1\n0\n6";
 
     // Populate board with pattern of WB-
     for (int i = 0; i < 23; i++) {
@@ -1445,6 +1448,7 @@ bool testReadBoard() {
     // Close file to allow resources
     o.close();
     o2.close();
+    o3.close();
 
     // Start assertions
     try {
@@ -1469,6 +1473,20 @@ bool testReadBoard() {
         assert(b2[5] == -1);
         for (int i = 6; i < 23; i++)
             assert(b2[i] == 0);
+        
+        // Read Board with letter values
+        Board b3("test_read123456789_3.txt");
+        for (int i = 0; i < 23; i++) {
+            if (i >= 3 && i < 6)
+                assert (b3[i] == 1);
+            else if (i >= 6 && i < 9)
+                assert (b3[i] == -1);
+            else
+                assert (b3[i] == 0);
+        }
+        assert(b3.whiteTurn == 1);
+        assert(b3.gamePhase == 0);
+        assert(b3.depth == 6);
 
     } catch (const exception e) { // Fail block
         cout << "Exception raised in testReadBoard:\t" << e.what() << endl;
@@ -1476,7 +1494,7 @@ bool testReadBoard() {
     }
     
     // Clean file
-    try {remove("test_read123456789.txt");remove("test_read123456789_2.txt");}
+    try {remove("test_read123456789.txt");remove("test_read123456789_2.txt");remove("test_read123456789_3.txt");}
     catch (const exception e) {
         success = false;
     }

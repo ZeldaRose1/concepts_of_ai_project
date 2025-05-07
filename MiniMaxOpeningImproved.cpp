@@ -8,7 +8,7 @@ Arg1 is the input .txt file
 Arg2 is the output file
 Arg3 is the depth of the search
 
-The input file must be three lines with the following format:
+The input file must be four lines with the following format:
     First line: board positions with 1's representing white pieces,
         -1's representing black pieces, and 0's representing empty
     Second line: Single int with a 1 for white's turn and 0 for black's
