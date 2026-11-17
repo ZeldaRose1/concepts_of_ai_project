@@ -1,4 +1,9 @@
 # concepts_of_ai_project
+
+This project is an artificial intelligence game of 9 men's morris. It selects the next move by optimizing a min-max search with alpha beta pruning and a heuristic to estimate the strength of a board position. It was the semester project for a spring 2025 class, Concepts of AI.
+
+## Running the program
+
 This is the code directory for the semester long project in my Concepts of Artificial Intelligence class.
 Compilation of the program and running the tests is simple. Just run "make test" from the source
 directory. The Makefile will clean the folder, if it has anything that needs to be deleted, compile the
